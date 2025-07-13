@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+// Package payment.v1 содержит API для работы с сервисом payment
+package payment.v1;
+
+option go_package = "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1;payment";
+
+// PaymentService - cервис оплаты заказов, который симулирует работу платёжного шлюза
+service PaymentService {
+  // PayOrder oбрабатывает команду на оплату и возвращает transaction_uuid
+  rpc PayOrder(PayOrderRequest) returns (PayOrderResponse);
+}
+
+// GetPartRequest - запрос на обработку оплаты
+message PayOrderRequest {
+  // order_uuid - UUID зaказа
+  string order_uuid = 1;
+
+  // user_uuid - UUID пользователя, который инициирует оплату
+  string user_uuid = 2;
+
+  // payment_method - выбранный способ оплаты
+  PAYMENTMETHOD payment_method = 3;
+}
+
+// PayOrderResponse - ответ с информацией о UUID транзакции оплаты
+message PayOrderResponse{
+  // transaction_uuid - UUID транзакции оплаты
+  string transaction_uuid = 1;
+}
+
+// Category - перечисление
+enum PAYMENTMETHOD{
+  // UNKNOWN - неизвестный способ
+  UNKNOWN = 0;
+
+  // CARD - банковская карта
+  CARD = 1;
+
+  // SBP - система быстрых платежей
+  SBP = 2;
+
+  // CREDIT_CARD - кредитная карта
+  CREDIT_CARD = 3;
+
+  // INVESTOR_MONEY - деньги инвестора (внутренний метод)
+  INVESTOR_MONEY = 4;
+}

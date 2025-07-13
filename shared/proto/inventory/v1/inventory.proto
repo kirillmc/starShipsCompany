@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-// Package ufo.v1 содержит API для работы с наблюдениями НЛО
+// Package inventory.v1 содержит API для работы с сервисом inventory
 package inventory.v1;
 
 import "google/protobuf/timestamp.proto";
