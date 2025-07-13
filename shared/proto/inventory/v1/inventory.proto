@@ -115,13 +115,13 @@ message Dimensions{
 // Manufacturer - структура с информацией о производителе
 message Manufacturer{
   // name - название
-  double name = 1;
+  string name = 1;
 
   // country - страна производства
-  double country = 2;
+  string country = 2;
 
   // website - сайт производителя
-  double website = 3;
+  string website = 3;
 }
 
 // Value - набор из разрешенных типов значений (oneOf)
