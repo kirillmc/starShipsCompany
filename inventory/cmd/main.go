@@ -3,6 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+
 	"github.com/brianvoe/gofakeit/v7"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc"
@@ -10,12 +17,6 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"log"
-	"net"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
 )
 
 const grpcPort = 50051
@@ -91,7 +92,6 @@ func (s *inventoryService) ListParts(_ context.Context, req *inventoryV1.ListPar
 	return &inventoryV1.ListPartsResponse{
 		Parts: filteredParts,
 	}, nil
-
 }
 
 func (s *inventoryService) newService() *inventoryService {
@@ -111,7 +111,7 @@ func setDefaultPartsMap() map[string]*inventoryV1.Part {
 			Description:   gofakeit.Slogan(),
 			Price:         gofakeit.Price(1, 101),
 			StockQuantity: gofakeit.Int64(),
-			Category:      inventoryV1.CATEGORY(gofakeit.IntN(4)),
+			Category:      inventoryV1.CATEGORY(gofakeit.Int32() % 4),
 			Dimensions: &inventoryV1.Dimensions{
 				Length: gofakeit.Float64(),
 				Width:  gofakeit.Float64(),
@@ -134,7 +134,7 @@ func setDefaultPartsMap() map[string]*inventoryV1.Part {
 }
 
 func (s *inventoryService) filterValues(filter *inventoryV1.PartsFilter) []*inventoryV1.Part {
-	var parts = make([]*inventoryV1.Part, 0, len(s.parts))
+	parts := make([]*inventoryV1.Part, 0, len(s.parts))
 	for _, part := range s.parts {
 		parts = append(parts, part)
 	}
@@ -167,7 +167,8 @@ func (s *inventoryService) filterValues(filter *inventoryV1.PartsFilter) []*inve
 }
 
 func applySimpleFieldFilter[T AllowedFilterTypes](filterValues []T, allowedParts []*inventoryV1.Part,
-	getField func(*inventoryV1.Part) T) []*inventoryV1.Part {
+	getField func(*inventoryV1.Part) T,
+) []*inventoryV1.Part {
 	if filterValues == nil {
 		return allowedParts
 	}
@@ -211,7 +212,7 @@ func getFilterValuesSet[T AllowedFilterTypes](filterValues []T) map[T]struct{} {
 		return nil
 	}
 
-	var filterSet = make(map[T]struct{})
+	filterSet := make(map[T]struct{})
 
 	for _, filterValue := range filterValues {
 		if _, ok := filterSet[filterValue]; !ok {

@@ -16,6 +16,12 @@ post:
         application/json:
           schema:
             $ref: ../components/create_order_response.yaml
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
     default:
       description: Unexpected error
       content:

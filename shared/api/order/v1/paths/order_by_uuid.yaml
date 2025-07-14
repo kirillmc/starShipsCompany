@@ -6,25 +6,25 @@ get:
   operationId: GetOrder
   tags:
     - Order
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: ../components/pay_order_request.yaml
   responses:
     '200':
       description: Order successfully paid
       content:
         application/json:
           schema:
-            $ref: ../components/pay_order_response.yaml
+            $ref: ../components/get_order_response.yaml
     '404':
       description: Order not founded
       content:
         application/json:
           schema:
             $ref: ../components/errors/not_found_error.yaml
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
     default:
       description: Unexpected error
       content:
