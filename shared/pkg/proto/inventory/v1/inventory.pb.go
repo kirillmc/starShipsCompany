@@ -131,10 +131,10 @@ func (x *GetPartRequest) GetUuid() string {
 	return ""
 }
 
-// GetPartResponse - ответ с информацией о детали космичесокго корабля
+// GetPartResponse - ответ с информацией о детали космического корабля
 type GetPartResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// part - информация о детали космичесокго корабля
+	// part - информация о детали космического корабля
 	Part          *Part `protobuf:"bytes,1,opt,name=part,proto3" json:"part,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -269,7 +269,7 @@ func (x *ListPartsResponse) GetParts() []*Part {
 	return nil
 }
 
-// Part - структура с информацией о детали космичесокго корабля
+// Part - структура с информацией о детали космического корабля
 type Part struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// uuid - уникальный идентификатор детали

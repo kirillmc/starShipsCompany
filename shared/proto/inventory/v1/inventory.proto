@@ -22,9 +22,9 @@ message GetPartRequest {
   string uuid = 1;
 }
 
-// GetPartResponse - ответ с информацией о детали космичесокго корабля
+// GetPartResponse - ответ с информацией о детали космического корабля
 message GetPartResponse{
-  // part - информация о детали космичесокго корабля
+  // part - информация о детали космического корабля
   Part part = 1;
 }
 
@@ -40,7 +40,7 @@ message ListPartsResponse{
   repeated Part parts = 1;
 }
 
-// Part - структура с информацией о детали космичесокго корабля
+// Part - структура с информацией о детали космического корабля
 message Part{
   // uuid - уникальный идентификатор детали
   string uuid = 1;
