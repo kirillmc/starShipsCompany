@@ -1,0 +1,13 @@
+type: object
+required: [ user_uuid, part_uuids ]
+properties:
+  user_uuid:
+    type: string
+    description: UUID пользователя
+    example: 93f9888b-b96c-41c8-aa15-69b940ce5b1f
+  part_uuids:
+    type: array
+    items:
+      type: string
+      description: UUID детали
+      example: 93f9888b-b96c-41c8-aa15-69b940ce5b1f
