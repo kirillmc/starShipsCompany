@@ -1302,6 +1302,8 @@ func (s *PaymentMethod) Decode(d *jx.Decoder) error {
 	switch PaymentMethod(v) {
 	case PaymentMethodUNKNOWN:
 		*s = PaymentMethodUNKNOWN
+	case PaymentMethodUNSPECIFIED:
+		*s = PaymentMethodUNSPECIFIED
 	case PaymentMethodCARD:
 		*s = PaymentMethodCARD
 	case PaymentMethodSBP:

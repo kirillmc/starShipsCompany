@@ -23,19 +23,12 @@ func main() {
 		log.Printf("failed to listen: %v\n", err)
 		return
 	}
-	defer func() {
-		if cerr := lis.Close(); cerr != nil {
-			log.Printf("failed to close listener: %v\n", cerr)
-		}
-	}()
 
 	s := grpc.NewServer()
+	reflection.Register(s)
 	service := &paymentService{}
 
 	paymentV1.RegisterPaymentServiceServer(s, service)
-
-	// рефлексия для отладки
-	reflection.Register(s)
 
 	go func() {
 		log.Printf("Starting gRPC server at port %d", grpcPort)
@@ -46,7 +39,6 @@ func main() {
 		}
 	}()
 
-	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit

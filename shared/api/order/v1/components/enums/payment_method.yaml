@@ -3,6 +3,7 @@ title: PaymentMethod
 description: Способы оплаты
 enum:
   - UNKNOWN
+  - UNSPECIFIED
   - CARD
   - SBP
   - CREDIT_CARD

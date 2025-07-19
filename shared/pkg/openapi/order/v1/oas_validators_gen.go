@@ -173,6 +173,8 @@ func (s PaymentMethod) Validate() error {
 	switch s {
 	case "UNKNOWN":
 		return nil
+	case "UNSPECIFIED":
+		return nil
 	case "CARD":
 		return nil
 	case "SBP":

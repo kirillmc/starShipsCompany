@@ -31,18 +31,16 @@ const (
 
 	inventoryServiceAddress = "localhost:50051"
 	paymentServiceAddress   = "localhost:50052"
-	// Таймауты для HTTP-сервера
-	readHeaderTimeout = 5 * time.Second
-	shutdownTimeout   = 10 * time.Second
+	readHeaderTimeout       = 5 * time.Second
+	shutdownTimeout         = 10 * time.Second
 )
 
-// OrderStorage представляет потокобезопасное хранилище данных о заказах
 type OrderStorage struct {
 	mu     sync.RWMutex
 	orders map[string]*Order
 }
 
-func NewWeatherStorage() *OrderStorage {
+func NewOrderStorage() *OrderStorage {
 	return &OrderStorage{
 		orders: make(map[string]*Order),
 	}
@@ -79,7 +77,7 @@ func (s *OrderHandler) CreateOrder(ctx context.Context, req *orderV1.CreateOrder
 	if err != nil {
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: fmt.Sprintf("Не удалось получить список доступных деталей: %s", err),
+			Message: fmt.Sprintf("Не удалось получить список доступных деталей"),
 		}, nil
 	}
 	if len(resp.Parts) < len(req.PartUuids) {
@@ -91,7 +89,6 @@ func (s *OrderHandler) CreateOrder(ctx context.Context, req *orderV1.CreateOrder
 
 	var totalPrice float64
 	partsUUIDS := make([]string, 0, len(resp.Parts))
-
 	for _, part := range resp.Parts {
 		totalPrice += part.Price
 		partsUUIDS = append(partsUUIDS, part.Uuid)
@@ -142,7 +139,7 @@ func (s *OrderHandler) PayOrder(ctx context.Context, req *orderV1.PayOrderReques
 	if err != nil || resp == nil {
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: fmt.Sprintf("Не удалось провести транзакцию для заказа с UUID %s: %s", order.OrderUUID, err),
+			Message: fmt.Sprintf("Не удалось провести транзакцию для заказа с UUID %s", order.OrderUUID),
 		}, nil
 	}
 
@@ -166,7 +163,6 @@ func paymentMethodToPaymentV1(method orderV1.PaymentMethod) paymentV1.PAYMENTMET
 	return paymentV1.PAYMENTMETHOD_UNKNOWN
 }
 
-// GetWeather возвращает информацию о погоде по имени города
 func (s *OrderStorage) GetWeather(city string) *Order {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -218,7 +214,6 @@ type OrderHandler struct {
 	paymentService   paymentV1.PaymentServiceClient
 }
 
-// NewOrderHandler создает новый обработчик запросов к API погоды
 func NewOrderHandler(storage *OrderStorage, inventoryService inventoryV1.InventoryServiceClient, paymentService paymentV1.PaymentServiceClient) *OrderHandler {
 	return &OrderHandler{
 		storage:          storage,
@@ -227,7 +222,6 @@ func NewOrderHandler(storage *OrderStorage, inventoryService inventoryV1.Invento
 	}
 }
 
-// NewError создает новую ошибку в формате GenericError
 func (h *OrderHandler) NewError(_ context.Context, err error) *orderV1.GenericErrorStatusCode {
 	return &orderV1.GenericErrorStatusCode{
 		StatusCode: http.StatusInternalServerError,
@@ -239,7 +233,7 @@ func (h *OrderHandler) NewError(_ context.Context, err error) *orderV1.GenericEr
 }
 
 func main() {
-	storage := NewWeatherStorage()
+	storage := NewOrderStorage()
 
 	connInventory, err := grpc.NewClient(
 		inventoryServiceAddress,
@@ -273,35 +267,26 @@ func main() {
 
 	orderHandler := NewOrderHandler(storage, inventoryClient, pymentClient)
 
-	// Создаем OpenAPI сервер
 	orderServer, err := orderV1.NewServer(orderHandler)
 	if err != nil {
 		log.Printf("ошибка создания сервера OpenAPI: %v", err)
 		return
 	}
 
-	// Инициализируем роутер Chi
 	r := chi.NewRouter()
 
-	// Добавляем middleware
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	// r.Use(middleware.Timeout(10 * time.Second))
+	r.Use(middleware.Timeout(10 * time.Second))
 
-	// Монтируем обработчики OpenAPI
 	r.Mount("/", orderServer)
 
-	// Запускаем HTTP-сервер
 	server := &http.Server{
 		Addr:              net.JoinHostPort(httpHost, httpPort),
 		Handler:           r,
-		ReadHeaderTimeout: readHeaderTimeout, // Защита от Slowloris атак - тип DDoS-атаки, при которой
-		// атакующий умышленно медленно отправляет HTTP-заголовки, удерживая соединения открытыми и истощая
-		// пул доступных соединений на сервере. ReadHeaderTimeout принудительно закрывает соединение,
-		// если клиент не успел отправить все заголовки за отведенное время.
+		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
-	// Запускаем сервер в отдельной горутине
 	go func() {
 		log.Printf("🚀 HTTP-сервер запущен на порту %s\n", httpPort)
 		err = server.ListenAndServe()
@@ -310,14 +295,12 @@ func main() {
 		}
 	}()
 
-	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
 	log.Println("🛑 Завершение работы сервера...")
 
-	// Создаем контекст с таймаутом для остановки сервера
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 

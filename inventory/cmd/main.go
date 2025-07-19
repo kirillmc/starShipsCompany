@@ -27,20 +27,13 @@ func main() {
 		log.Printf("failed to listen: %v\n", err)
 		return
 	}
-	defer func() {
-		if cerr := lis.Close(); cerr != nil {
-			log.Printf("failed to close listener: %v\n", cerr)
-		}
-	}()
 
 	s := grpc.NewServer()
+	reflection.Register(s)
 	service := &inventoryService{}
 	service = service.newService()
 
 	inventoryV1.RegisterInventoryServiceServer(s, service)
-
-	// рефлексия для отладки
-	reflection.Register(s)
 
 	go func() {
 		log.Printf("Starting gRPC server at port %d", grpcPort)
@@ -68,6 +61,12 @@ type inventoryService struct {
 	parts map[string]*inventoryV1.Part
 }
 
+func (s *inventoryService) newService() *inventoryService {
+	return &inventoryService{
+		parts: setDefaultPartsMap(),
+	}
+}
+
 func (s *inventoryService) GetPart(_ context.Context, req *inventoryV1.GetPartRequest) (*inventoryV1.GetPartResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -82,7 +81,6 @@ func (s *inventoryService) GetPart(_ context.Context, req *inventoryV1.GetPartRe
 	}, nil
 }
 
-// ListParts - возвращает список деталей с возможностью фильтрации
 func (s *inventoryService) ListParts(_ context.Context, req *inventoryV1.ListPartsRequest) (*inventoryV1.ListPartsResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -94,16 +92,10 @@ func (s *inventoryService) ListParts(_ context.Context, req *inventoryV1.ListPar
 	}, nil
 }
 
-func (s *inventoryService) newService() *inventoryService {
-	return &inventoryService{
-		parts: setDefaultPartsMap(),
-	}
-}
-
 func setDefaultPartsMap() map[string]*inventoryV1.Part {
 	const defaultPartsCoount = 11
 	defaultMap := make(map[string]*inventoryV1.Part)
-	for i := 0; i < defaultPartsCoount; i++ {
+	for range defaultPartsCoount {
 		UUID := gofakeit.UUID()
 		defaultMap[UUID] = &inventoryV1.Part{
 			Uuid:          UUID,
