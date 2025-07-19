@@ -77,7 +77,7 @@ func (s *OrderHandler) CreateOrder(ctx context.Context, req *orderV1.CreateOrder
 	if err != nil {
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: fmt.Sprintf("Не удалось получить список доступных деталей"),
+			Message: "Не удалось получить список доступных деталей",
 		}, nil
 	}
 	if len(resp.Parts) < len(req.PartUuids) {
