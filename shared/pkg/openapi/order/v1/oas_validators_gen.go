@@ -171,8 +171,6 @@ func (s *PayOrderRequest) Validate() error {
 
 func (s PaymentMethod) Validate() error {
 	switch s {
-	case "UNKNOWN":
-		return nil
 	case "UNSPECIFIED":
 		return nil
 	case "CARD":

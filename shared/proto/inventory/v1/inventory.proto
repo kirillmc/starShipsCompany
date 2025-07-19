@@ -82,7 +82,7 @@ message Part{
 // Category - перечисление
 enum CATEGORY{
   // UNKNOWN - неизвестная категория
-  UNKNOWN = 0;
+  UNSPECIFIED = 0;
 
   // ENGINE - двигатель
   ENGINE = 1;

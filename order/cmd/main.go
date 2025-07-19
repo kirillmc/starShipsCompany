@@ -77,13 +77,13 @@ func (s *OrderHandler) CreateOrder(ctx context.Context, req *orderV1.CreateOrder
 	if err != nil {
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: "Не удалось получить список доступных деталей",
+			Message: "internal error",
 		}, nil
 	}
 	if len(resp.Parts) < len(req.PartUuids) {
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: "В наличии меньше деталей, чем требуется",
+			Message: "internal error",
 		}, nil
 	}
 
@@ -139,7 +139,7 @@ func (s *OrderHandler) PayOrder(ctx context.Context, req *orderV1.PayOrderReques
 	if err != nil || resp == nil {
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: fmt.Sprintf("Не удалось провести транзакцию для заказа с UUID %s", order.OrderUUID),
+			Message: "internal error",
 		}, nil
 	}
 
@@ -160,7 +160,7 @@ func paymentMethodToPaymentV1(method orderV1.PaymentMethod) paymentV1.PAYMENTMET
 		return paymentV1.PAYMENTMETHOD_INVESTOR_MONEY
 	}
 
-	return paymentV1.PAYMENTMETHOD_UNKNOWN
+	return paymentV1.PAYMENTMETHOD_UNSPECIFIED
 }
 
 func (s *OrderStorage) GetWeather(city string) *Order {

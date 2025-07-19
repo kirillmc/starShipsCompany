@@ -28,7 +28,7 @@ type PAYMENTMETHOD int32
 
 const (
 	// UNKNOWN - неизвестный способ
-	PAYMENTMETHOD_UNKNOWN PAYMENTMETHOD = 0
+	PAYMENTMETHOD_UNSPECIFIED PAYMENTMETHOD = 0
 	// CARD - банковская карта
 	PAYMENTMETHOD_CARD PAYMENTMETHOD = 1
 	// SBP - система быстрых платежей
@@ -42,14 +42,14 @@ const (
 // Enum value maps for PAYMENTMETHOD.
 var (
 	PAYMENTMETHOD_name = map[int32]string{
-		0: "UNKNOWN",
+		0: "UNSPECIFIED",
 		1: "CARD",
 		2: "SBP",
 		3: "CREDIT_CARD",
 		4: "INVESTOR_MONEY",
 	}
 	PAYMENTMETHOD_value = map[string]int32{
-		"UNKNOWN":        0,
+		"UNSPECIFIED":    0,
 		"CARD":           1,
 		"SBP":            2,
 		"CREDIT_CARD":    3,
@@ -145,7 +145,7 @@ func (x *PayOrderRequest) GetPaymentMethod() PAYMENTMETHOD {
 	if x != nil {
 		return x.PaymentMethod
 	}
-	return PAYMENTMETHOD_UNKNOWN
+	return PAYMENTMETHOD_UNSPECIFIED
 }
 
 // PayOrderResponse - ответ с информацией о UUID транзакции оплаты
@@ -206,9 +206,9 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\tuser_uuid\x18\x02 \x01(\tR\buserUuid\x12@\n" +
 	"\x0epayment_method\x18\x03 \x01(\x0e2\x19.payment.v1.PAYMENTMETHODR\rpaymentMethod\"=\n" +
 	"\x10PayOrderResponse\x12)\n" +
-	"\x10transaction_uuid\x18\x01 \x01(\tR\x0ftransactionUuid*T\n" +
-	"\rPAYMENTMETHOD\x12\v\n" +
-	"\aUNKNOWN\x10\x00\x12\b\n" +
+	"\x10transaction_uuid\x18\x01 \x01(\tR\x0ftransactionUuid*X\n" +
+	"\rPAYMENTMETHOD\x12\x0f\n" +
+	"\vUNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04CARD\x10\x01\x12\a\n" +
 	"\x03SBP\x10\x02\x12\x0f\n" +
 	"\vCREDIT_CARD\x10\x03\x12\x12\n" +

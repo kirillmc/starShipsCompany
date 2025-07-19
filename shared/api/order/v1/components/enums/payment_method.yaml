@@ -2,7 +2,6 @@ type: string
 title: PaymentMethod
 description: Способы оплаты
 enum:
-  - UNKNOWN
   - UNSPECIFIED
   - CARD
   - SBP

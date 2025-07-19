@@ -32,7 +32,7 @@ message PayOrderResponse{
 // Category - перечисление
 enum PAYMENTMETHOD{
   // UNKNOWN - неизвестный способ
-  UNKNOWN = 0;
+  UNSPECIFIED = 0;
 
   // CARD - банковская карта
   CARD = 1;
