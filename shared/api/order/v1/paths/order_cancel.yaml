@@ -1,0 +1,35 @@
+parameters:
+  - $ref: ../params/order_uuid.yaml
+
+post:
+  summary: Cancel order
+  operationId: CancelOrder
+  tags:
+    - Order
+  responses:
+    '204':
+      description: Order successfully canceled
+    '404':
+      description: Order not founded
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/not_found_error.yaml
+    '409':
+      description: Order already paid and can't be cancelled
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/conflict_error.yaml
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/generic_error.yaml

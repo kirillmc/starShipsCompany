@@ -1,0 +1,12 @@
+type: object
+required: [ order_uuid, total_price ]
+properties:
+  order_uuid:
+    type: string
+    description: UUID пользователя
+    example: 93f9888b-b96c-41c8-aa15-69b940ce5b1f
+  total_price:
+    type: number
+    format: float64
+    description: Цена заказа
+    example: 123.45
