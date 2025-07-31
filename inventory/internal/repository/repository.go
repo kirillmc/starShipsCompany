@@ -2,10 +2,11 @@ package repository
 
 import (
 	"context"
-	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
+	serviceModel "github.com/kirillmc/starShipsCompany/inventory/internal/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
 type Repository interface {
-	Get(ctx context.Context, req *inventoryV1.GetPartRequest) (*inventoryV1.GetPartResponse, error)
-	List(ctx context.Context, req *inventoryV1.ListPartsRequest) (*inventoryV1.ListPartsResponse, error)
+	Get(ctx context.Context, uuid model.UUID) (*serviceModel.Part, error)
+	List(ctx context.Context) map[model.UUID]*serviceModel.Part
 }

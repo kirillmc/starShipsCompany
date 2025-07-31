@@ -5,8 +5,8 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
-func DimensionsToServiceModel(dimensions model.Dimensions) serviceModel.Dimensions {
-	dimensionsService := serviceModel.Dimensions{
+func DimensionsToService(dimensions *model.Dimensions) *serviceModel.Dimensions {
+	dimensionsService := &serviceModel.Dimensions{
 		Length: dimensions.Length,
 		Width:  dimensions.Width,
 		Height: dimensions.Height,

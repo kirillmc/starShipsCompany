@@ -5,7 +5,7 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
-func CategoryToServiceModel(category model.Category) serviceModel.Category {
+func CategoryToService(category model.Category) serviceModel.Category {
 	switch category {
 	case model.ENGINE:
 		return serviceModel.ENGINE

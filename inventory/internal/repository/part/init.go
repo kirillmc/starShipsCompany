@@ -2,30 +2,30 @@ package part
 
 import (
 	"github.com/brianvoe/gofakeit/v7"
-	inventoryV1 "github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 	"github.com/samber/lo"
 	"time"
 )
 
-func setDefaultPartsMap() map[string]*inventoryV1.Part {
+func setDefaultPartsMap() map[model.UUID]*model.Part {
 	const defaultPartsCoount = 11
-	defaultMap := make(map[string]*inventoryV1.Part)
+	defaultMap := make(map[string]*model.Part)
 	for range defaultPartsCoount {
 		UUID := gofakeit.UUID()
-		defaultMap[UUID] = &inventoryV1.Part{
+		defaultMap[UUID] = &model.Part{
 			UUID:          UUID,
 			Name:          gofakeit.Name(),
 			Description:   gofakeit.Slogan(),
 			Price:         gofakeit.Price(1, 101),
 			StockQuantity: gofakeit.Int64(),
-			Category:      inventoryV1.Category(gofakeit.Int32() % 4),
-			Dimensions: &inventoryV1.Dimensions{
+			Category:      model.Category(gofakeit.Int32() % 4),
+			Dimensions: &model.Dimensions{
 				Length: gofakeit.Float64(),
 				Width:  gofakeit.Float64(),
 				Height: gofakeit.Float64(),
 				Weight: gofakeit.Float64(),
 			},
-			Manufacturer: &inventoryV1.Manufacturer{
+			Manufacturer: &model.Manufacturer{
 				Name:    gofakeit.Name(),
 				Country: gofakeit.Country(),
 				Website: gofakeit.Word(),
