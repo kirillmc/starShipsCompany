@@ -6,9 +6,9 @@ import (
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 )
 
-func (s *api) ListParts(ctx context.Context, req *inventoryV1.ListPartsRequest) (*inventoryV1.ListPartsResponse, error) {
+func (a *api) ListParts(ctx context.Context, req *inventoryV1.ListPartsRequest) (*inventoryV1.ListPartsResponse, error) {
 	partsFilter := converter.PartsFilterToModel(req.GetFilter())
-	parts := s.inventoryService.List(ctx, partsFilter)
+	parts := a.inventoryService.List(ctx, partsFilter)
 
 	partsProto := converter.PartsToProto(parts)
 
