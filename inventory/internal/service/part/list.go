@@ -82,7 +82,7 @@ func applyTagsFilter(filterValues []string, allowedParts []*model.Part) []*model
 }
 
 type allowedFilterTypes interface {
-	string | model.Category | model.UUID
+	string | model.Category
 }
 
 func getFilterValuesSet[T allowedFilterTypes](filterValues []T) map[T]struct{} {
