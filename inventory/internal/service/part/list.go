@@ -5,14 +5,14 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
 )
 
-func (s *service) List(ctx context.Context, filter *model.PartFilter) []*model.Part {
+func (s *service) List(ctx context.Context, filter *model.PartsFilter) []*model.Part {
 	parts := s.repo.List(ctx)
 	filteredParts := filterValues(filter, parts)
 
 	return filteredParts
 }
 
-func filterValues(filter *model.PartFilter, partsSet map[model.UUID]*model.Part) []*model.Part {
+func filterValues(filter *model.PartsFilter, partsSet map[model.UUID]*model.Part) []*model.Part {
 	parts := make([]*model.Part, 0, len(partsSet))
 	for _, part := range partsSet {
 		parts = append(parts, part)

@@ -5,8 +5,8 @@ import (
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 )
 
-func PartsFilterToModel(partsFiler *inventoryV1.PartsFilter) *model.PartFilter {
-	partsFiletModel := &model.PartFilter{
+func PartsFilterToModel(partsFiler *inventoryV1.PartsFilter) *model.PartsFilter {
+	partsFilterModel := &model.PartsFilter{
 		UUIDs:                 partsFiler.Uuids,
 		Names:                 partsFiler.Names,
 		Categories:            CATEGORIESToModel(partsFiler.Categories),
@@ -14,5 +14,5 @@ func PartsFilterToModel(partsFiler *inventoryV1.PartsFilter) *model.PartFilter {
 		Tags:                  partsFiler.Tags,
 	}
 
-	return partsFiletModel
+	return partsFilterModel
 }

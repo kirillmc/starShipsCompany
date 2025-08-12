@@ -1,9 +1,7 @@
 package model
 
-type UUID = string
-
 type PayOrderInfo struct {
-	OrderUUID     UUID
-	UserUUID      UUID
+	OrderUUID     string
+	UserUUID      string
 	PaymentMethod PaymentMethod
 }
