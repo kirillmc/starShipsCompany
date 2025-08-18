@@ -1066,8 +1066,8 @@ func (s *OrderStatus) Decode(d *jx.Decoder) error {
 	}
 	// Try to use constant string.
 	switch OrderStatus(v) {
-	case OrderStatusUNKNOWN:
-		*s = OrderStatusUNKNOWN
+	case OrderStatusUNSPECIFIED:
+		*s = OrderStatusUNSPECIFIED
 	case OrderStatusPENDINGPAYMENT:
 		*s = OrderStatusPENDINGPAYMENT
 	case OrderStatusPAID:

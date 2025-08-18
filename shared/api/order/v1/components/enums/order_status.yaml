@@ -2,7 +2,7 @@ type: string
 title: OrderStatus
 description: Статус заказа
 enum:
-  - UNKNOWN
+  - UNSPECIFIED
   - PENDING_PAYMENT
   - PAID
   - CANCELLED

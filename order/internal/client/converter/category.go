@@ -29,3 +29,18 @@ func CategoryToProto(category model.Category) inventoryV1.CATEGORY {
 		return inventoryV1.CATEGORY_UNSPECIFIED
 	}
 }
+
+func CategoryToModel(category inventoryV1.CATEGORY) model.Category {
+	switch category {
+	case inventoryV1.CATEGORY_ENGINE:
+		return model.ENGINE
+	case inventoryV1.CATEGORY_FUEL:
+		return model.FUEL
+	case inventoryV1.CATEGORY_PORTHOLE:
+		return model.PORTHOLE
+	case inventoryV1.CATEGORY_WING:
+		return model.WING
+	default:
+		return model.UNSPECIFIED_CATEGORY
+	}
+}

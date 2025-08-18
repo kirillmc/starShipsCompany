@@ -545,7 +545,7 @@ func (o OptString) Or(d string) string {
 type OrderStatus string
 
 const (
-	OrderStatusUNKNOWN        OrderStatus = "UNKNOWN"
+	OrderStatusUNSPECIFIED    OrderStatus = "UNSPECIFIED"
 	OrderStatusPENDINGPAYMENT OrderStatus = "PENDING_PAYMENT"
 	OrderStatusPAID           OrderStatus = "PAID"
 	OrderStatusCANCELLED      OrderStatus = "CANCELLED"
@@ -554,7 +554,7 @@ const (
 // AllValues returns all OrderStatus values.
 func (OrderStatus) AllValues() []OrderStatus {
 	return []OrderStatus{
-		OrderStatusUNKNOWN,
+		OrderStatusUNSPECIFIED,
 		OrderStatusPENDINGPAYMENT,
 		OrderStatusPAID,
 		OrderStatusCANCELLED,
@@ -564,7 +564,7 @@ func (OrderStatus) AllValues() []OrderStatus {
 // MarshalText implements encoding.TextMarshaler.
 func (s OrderStatus) MarshalText() ([]byte, error) {
 	switch s {
-	case OrderStatusUNKNOWN:
+	case OrderStatusUNSPECIFIED:
 		return []byte(s), nil
 	case OrderStatusPENDINGPAYMENT:
 		return []byte(s), nil
@@ -580,8 +580,8 @@ func (s OrderStatus) MarshalText() ([]byte, error) {
 // UnmarshalText implements encoding.TextUnmarshaler.
 func (s *OrderStatus) UnmarshalText(data []byte) error {
 	switch OrderStatus(data) {
-	case OrderStatusUNKNOWN:
-		*s = OrderStatusUNKNOWN
+	case OrderStatusUNSPECIFIED:
+		*s = OrderStatusUNSPECIFIED
 		return nil
 	case OrderStatusPENDINGPAYMENT:
 		*s = OrderStatusPENDINGPAYMENT
