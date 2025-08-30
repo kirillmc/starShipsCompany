@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func setDefaultPartsMap() map[model.UUID]*model.Part {
+func setDefaultPartsMap() map[model.PartUUID]*model.Part {
 	const defaultPartsCoount = 11
 	defaultMap := make(map[string]*model.Part)
 	for range defaultPartsCoount {

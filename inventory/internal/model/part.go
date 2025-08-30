@@ -4,10 +4,10 @@ import (
 	"time"
 )
 
-type UUID = string
+type PartUUID = string
 
 type Part struct {
-	UUID          UUID
+	UUID          PartUUID
 	Name          string
 	Description   string
 	Price         float64

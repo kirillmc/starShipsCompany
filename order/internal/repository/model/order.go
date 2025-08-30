@@ -1,13 +1,16 @@
 package model
 
-type UUID = string
+type OrderUUID = string
+type UserUUID = string
+type PartUUID = string
+type TransactionUUID = string
 
 type Order struct {
-	OrderUUID       UUID             `json:"order_uuid"`
-	UserUUID        UUID             `json:"user_uuid"`
-	PartUuids       []UUID           `json:"part_uuids"`
-	TotalPrice      float64          `json:"total_price"`
-	TransactionUUID UUID             `json:"transaction_uuid"`
-	PaymentMethod   OptPaymentMethod `json:"payment_method"`
-	Status          OptOrderStatus   `json:"status"`
+	OrderUUID       OrderUUID       `json:"order_uuid"`
+	UserUUID        UserUUID        `json:"user_uuid"`
+	PartUUIDs       []PartUUID      `json:"part_uuids"`
+	TotalPrice      float64         `json:"total_price"`
+	TransactionUUID TransactionUUID `json:"transaction_uuid"`
+	PaymentMethod   PaymentMethod   `json:"payment_method"`
+	Status          OrderStatus     `json:"status"`
 }

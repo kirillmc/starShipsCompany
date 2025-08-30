@@ -12,7 +12,7 @@ func (s *service) List(ctx context.Context, filter *model.PartsFilter) []*model.
 	return filteredParts
 }
 
-func filterValues(filter *model.PartsFilter, partsSet map[model.UUID]*model.Part) []*model.Part {
+func filterValues(filter *model.PartsFilter, partsSet map[model.PartUUID]*model.Part) []*model.Part {
 	parts := make([]*model.Part, 0, len(partsSet))
 	for _, part := range partsSet {
 		parts = append(parts, part)
@@ -23,7 +23,7 @@ func filterValues(filter *model.PartsFilter, partsSet map[model.UUID]*model.Part
 	}
 
 	if len(filter.UUIDs) > 0 {
-		parts = applySimpleFieldFilter(filter.UUIDs, parts, func(p *model.Part) model.UUID { return p.UUID })
+		parts = applySimpleFieldFilter(filter.UUIDs, parts, func(p *model.Part) model.PartUUID { return p.UUID })
 	}
 
 	if len(filter.Names) > 0 {

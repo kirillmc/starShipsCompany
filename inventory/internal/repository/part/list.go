@@ -7,7 +7,7 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
-func (r *repository) List(_ context.Context) map[model.UUID]*serviceModel.Part {
+func (r *repository) List(_ context.Context) map[model.PartUUID]*serviceModel.Part {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

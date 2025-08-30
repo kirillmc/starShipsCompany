@@ -8,15 +8,15 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
-func (r *repository) Get(_ context.Context, uuid model.UUID) (*serviceModel.Part, error) {
+func (r *repository) Get(_ context.Context, partUUID model.PartUUID) (*serviceModel.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
 	const op = "Get"
 
-	part, ok := r.parts[uuid]
+	part, ok := r.parts[partUUID]
 	if !ok {
-		return nil, fmt.Errorf("failed to execute %s method: part with UUID %s not found", op, uuid)
+		return nil, fmt.Errorf("failed to execute %s method: part with PartUUID %s not found", op, partUUID)
 	}
 
 	return converter.PartToService(part), nil

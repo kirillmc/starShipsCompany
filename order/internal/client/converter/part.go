@@ -6,8 +6,12 @@ import (
 	"github.com/samber/lo"
 )
 
-func PartToModel(part *inventoryV1.Part) *model.Part {
-	partProto := &model.Part{
+func PartToModel(part *inventoryV1.Part) model.Part {
+	if part == nil {
+		return model.Part{}
+	}
+
+	partProto := model.Part{
 		UUID:          part.Uuid,
 		Name:          part.Name,
 		Description:   part.Description,

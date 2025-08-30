@@ -2,6 +2,7 @@ package order
 
 import (
 	def "github.com/kirillmc/starShipsCompany/order/internal/repository"
+	"github.com/kirillmc/starShipsCompany/order/internal/repository/model"
 	"sync"
 )
 
@@ -9,11 +10,11 @@ var _ def.Repository = (*repository)(nil)
 
 type repository struct {
 	mu     sync.RWMutex
-	orders map[string]*Order
+	orders map[string]*model.Order
 }
 
-func NewOrderStorage() *repository {
+func NewRepository() *repository {
 	return &repository{
-		orders: make(map[string]*Order),
+		orders: make(map[string]*model.Order),
 	}
 }

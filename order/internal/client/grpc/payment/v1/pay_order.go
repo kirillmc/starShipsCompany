@@ -6,7 +6,7 @@ import (
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 )
 
-func (c *client) PayOrder(ctx context.Context, payOrderInfo model.PayOrderInfo) (model.UUID, error) {
+func (c *client) PayOrder(ctx context.Context, payOrderInfo model.PayOrderParams) (model.TransactionUUID, error) {
 	req := converter.ModelToPayOrderRequest(payOrderInfo)
 	resp, err := c.generatedClient.PayOrder(ctx, req)
 	if err != nil {

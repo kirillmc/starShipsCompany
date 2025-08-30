@@ -6,5 +6,5 @@ import (
 )
 
 type Service interface {
-	Pay(context.Context, *model.PayOrderInfo) model.UUID
+	Pay(context.Context, *model.PayOrderInfo) model.TransactionUUID
 }

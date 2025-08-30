@@ -5,7 +5,7 @@ import (
 	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
 )
 
-func ModelToPayOrderRequest(req model.PayOrderInfo) *paymentV1.PayOrderRequest {
+func ModelToPayOrderRequest(req model.PayOrderParams) *paymentV1.PayOrderRequest {
 	payOrderInfo := &paymentV1.PayOrderRequest{
 		OrderUuid:     req.OrderUUID,
 		UserUuid:      req.UserUUID,

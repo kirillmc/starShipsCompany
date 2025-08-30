@@ -6,6 +6,6 @@ import (
 )
 
 type Service interface {
-	Get(ctx context.Context, uuid model.UUID) (*model.Part, error)
+	Get(ctx context.Context, uuid model.PartUUID) (*model.Part, error)
 	List(ctx context.Context, filter *model.PartsFilter) []*model.Part
 }

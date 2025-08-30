@@ -2,45 +2,37 @@ package v1
 
 import (
 	"context"
-	"github.com/google/uuid"
+	"errors"
+	"github.com/kirillmc/starShipsCompany/order/internal/converter"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
-	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"net/http"
 )
 
 func (a *api) CreateOrder(ctx context.Context, req *orderV1.CreateOrderRequest) (orderV1.CreateOrderRes, error) {
 	if req == nil {
-		return &orderV1.CreateOrderResponse{}, nil
+		return &orderV1.UnprocessableEntityError{
+			Code:    http.StatusUnprocessableEntity,
+			Message: serviceErrors.UnprocessableEntityErr.Error(),
+		}, nil
 	}
 
-	inventoryReq := &inventoryV1.ListPartsRequest{Filter: &inventoryV1.PartsFilter{Uuids: req.PartUuids}}
-	resp, err := a.inventoryService.ListParts(ctx, inventoryReq)
+	orderInfo, err := a.orderService.Create(ctx, req.UserUUID, req.PartUuids)
 	if err != nil {
+		if errors.Is(err, serviceErrors.OnConflictErr) {
+			return &orderV1.ConflictError{
+				Code:    http.StatusConflict,
+				Message: serviceErrors.OnConflictErr.Error(),
+			}, nil
+		}
+
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: "internal error",
-		}, nil
-	}
-	if len(resp.Parts) < len(req.PartUuids) {
-		return &orderV1.InternalServerError{
-			Code:    http.StatusInternalServerError,
-			Message: "internal error",
+			Message: serviceErrors.InternalServerErr.Error(),
 		}, nil
 	}
 
-	var totalPrice float64
-	partsUUIDS := make([]string, 0, len(resp.Parts))
-	for _, part := range resp.Parts {
-		totalPrice += part.Price
-		partsUUIDS = append(partsUUIDS, part.Uuid)
-	}
+	resp := converter.OrderInfoToCreateOrderResponse(orderInfo)
 
-	orderUUID := uuid.NewString()
-
-	a.storage.addOrder(orderUUID, req.UserUUID, partsUUIDS, totalPrice)
-
-	return &orderV1.CreateOrderResponse{
-		OrderUUID:  orderUUID,
-		TotalPrice: totalPrice,
-	}, nil
+	return &resp, nil
 }
