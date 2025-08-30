@@ -2,6 +2,7 @@ package payment
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/kirillmc/starShipsCompany/payment/internal/model"
 )

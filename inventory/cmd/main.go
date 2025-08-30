@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	inventoryV1API "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
-	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/part"
-	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
 	"log"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
+	inventoryV1API "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
+	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/part"
+	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

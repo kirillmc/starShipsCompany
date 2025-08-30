@@ -1,8 +1,10 @@
 package model
 
-type OrderUUID = string
-type UserUUID = string
-type TransactionUUID = string
+type (
+	OrderUUID       = string
+	UserUUID        = string
+	TransactionUUID = string
+)
 
 type Order struct {
 	OrderUUID       OrderUUID       `json:"order_uuid"`

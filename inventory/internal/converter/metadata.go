@@ -3,7 +3,7 @@ package converter
 import inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 
 func MetadataToProto(metadata map[string]interface{}) map[string]*inventoryV1.Value {
-	var metadataProto = make(map[string]*inventoryV1.Value, len(metadata))
+	metadataProto := make(map[string]*inventoryV1.Value, len(metadata))
 	for key, value := range metadata {
 		switch v := value.(type) {
 		case string:

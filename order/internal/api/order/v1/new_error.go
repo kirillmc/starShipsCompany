@@ -2,8 +2,9 @@ package v1
 
 import (
 	"context"
-	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	"net/http"
+
+	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 
 func (a *api) NewError(_ context.Context, err error) *orderV1.GenericErrorStatusCode {

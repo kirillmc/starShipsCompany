@@ -2,8 +2,10 @@ package model
 
 import "time"
 
-type UUID = string
-type PartUUID = string
+type (
+	UUID     = string
+	PartUUID = string
+)
 
 type Part struct {
 	UUID          PartUUID

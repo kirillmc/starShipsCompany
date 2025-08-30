@@ -3,40 +3,40 @@ package v1
 import (
 	"context"
 	"errors"
+	"net/http"
+
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
-	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
-	"net/http"
 )
 
 func (a *api) PayOrder(ctx context.Context, req *orderV1.PayOrderRequest, params orderV1.PayOrderParams) (orderV1.PayOrderRes, error) {
 	if req == nil {
 		return &orderV1.UnprocessableEntityError{
 			Code:    http.StatusUnprocessableEntity,
-			Message: serviceErrors.UnprocessableEntityErr.Error(),
+			Message: serviceErrors.ErrUnprocessableEntity.Error(),
 		}, nil
 	}
 
 	transactionUUID, err := a.orderService.Pay(ctx, model.PayOrderParams{OrderUUID: params.OrderUUID.String()})
 	if err != nil {
-		if errors.Is(err, serviceErrors.NotFoundErr) {
+		if errors.Is(err, serviceErrors.ErrNotFound) {
 			return &orderV1.NotFoundError{
 				Code:    http.StatusNotFound,
-				Message: serviceErrors.NotFoundErr.Error(),
+				Message: serviceErrors.ErrNotFound.Error(),
 			}, nil
 		}
 
-		if errors.Is(err, serviceErrors.OnConflictErr) {
+		if errors.Is(err, serviceErrors.ErrOnConflict) {
 			return &orderV1.ConflictError{
 				Code:    http.StatusConflict,
-				Message: serviceErrors.OnConflictErr.Error(),
+				Message: serviceErrors.ErrOnConflict.Error(),
 			}, nil
 		}
 
 		return &orderV1.InternalServerError{
 			Code:    http.StatusInternalServerError,
-			Message: serviceErrors.InternalServerErr.Error(),
+			Message: serviceErrors.ErrInternalServer.Error(),
 		}, nil
 	}
 

@@ -1,11 +1,12 @@
 package converter
 
 import (
+	"time"
+
 	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"time"
 )
 
 func PartToProto(part *model.Part) *inventoryV1.Part {

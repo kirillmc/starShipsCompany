@@ -2,4 +2,4 @@ package error
 
 import "errors"
 
-var InternalServerErr = errors.New("internal server error")
+var ErrInternalServer = errors.New("internal server error")

@@ -2,6 +2,7 @@ package part
 
 import (
 	"context"
+
 	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
 )
 

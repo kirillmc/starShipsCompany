@@ -1,9 +1,8 @@
 package converter
 
 import (
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
-
 	serviceModel "github.com/kirillmc/starShipsCompany/inventory/internal/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
 func PartToService(part *model.Part) *serviceModel.Part {

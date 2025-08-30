@@ -27,7 +27,8 @@ func GetOrderParamsToRepo(params model.GetOrderParams) repoModel.GetOrderParams 
 }
 
 func ToCreateOrderRepo(orderUUID model.OrderUUID, userUUID model.UserUUID, partsUUIDS []model.PartUUID,
-	totalPrice float64) repoModel.Order {
+	totalPrice float64,
+) repoModel.Order {
 	repoOrder := repoModel.Order{
 		OrderUUID:       orderUUID,
 		UserUUID:        userUUID,

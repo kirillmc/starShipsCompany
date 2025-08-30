@@ -3,9 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	orderAPI "github.com/kirillmc/starShipsCompany/order/internal/api/order/v1"
-	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/order"
-	orderService "github.com/kirillmc/starShipsCompany/order/internal/service/order"
 	"log"
 	"net"
 	"net/http"
@@ -16,8 +13,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	orderAPI "github.com/kirillmc/starShipsCompany/order/internal/api/order/v1"
 	inventoryClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/inventory/v1"
 	paymentClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/payment/v1"
+	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/order"
+	orderService "github.com/kirillmc/starShipsCompany/order/internal/service/order"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
@@ -36,7 +36,6 @@ const (
 )
 
 func main() {
-
 	connInventory, err := grpc.NewClient(
 		inventoryServiceAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -68,7 +67,7 @@ func main() {
 	paymentClient := paymentClient.NewClient(paymentV1.NewPaymentServiceClient(connPayment))
 
 	storage := orderRepository.NewRepository()
-	service := orderService.NewService(paymentClient, inventoryClient, storage)
+	service := orderService.NewService(inventoryClient, paymentClient, storage)
 
 	orderHandler := orderAPI.NewAPI(service)
 

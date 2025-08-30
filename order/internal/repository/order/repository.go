@@ -1,9 +1,10 @@
 package order
 
 import (
+	"sync"
+
 	def "github.com/kirillmc/starShipsCompany/order/internal/repository"
 	"github.com/kirillmc/starShipsCompany/order/internal/repository/model"
-	"sync"
 )
 
 var _ def.Repository = (*repository)(nil)

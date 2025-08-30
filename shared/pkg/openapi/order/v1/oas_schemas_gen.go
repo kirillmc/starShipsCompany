@@ -46,6 +46,8 @@ func (s *ConflictError) SetMessage(val string) {
 }
 
 func (*ConflictError) cancelOrderRes() {}
+func (*ConflictError) createOrderRes() {}
+func (*ConflictError) payOrderRes()    {}
 
 // Ref: #
 type CreateOrderRequest struct {
@@ -693,3 +695,34 @@ func (s *PaymentMethod) UnmarshalText(data []byte) error {
 		return errors.Errorf("invalid value: %q", data)
 	}
 }
+
+// Ref: #
+type UnprocessableEntityError struct {
+	// HTTP-код ошибки.
+	Code int `json:"code"`
+	// Описание ошибки.
+	Message string `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *UnprocessableEntityError) GetCode() int {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *UnprocessableEntityError) GetMessage() string {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *UnprocessableEntityError) SetCode(val int) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *UnprocessableEntityError) SetMessage(val string) {
+	s.Message = val
+}
+
+func (*UnprocessableEntityError) createOrderRes() {}
+func (*UnprocessableEntityError) payOrderRes()    {}

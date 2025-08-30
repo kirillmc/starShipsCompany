@@ -2,6 +2,7 @@ package part
 
 import (
 	"context"
+
 	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
 )
 
@@ -46,7 +47,8 @@ func filterValues(filter *model.PartsFilter, partsSet map[model.PartUUID]*model.
 }
 
 func applySimpleFieldFilter[T allowedFilterTypes](filterValues []T, allowedParts []*model.Part,
-	getField func(*model.Part) T) []*model.Part {
+	getField func(*model.Part) T,
+) []*model.Part {
 	if filterValues == nil {
 		return allowedParts
 	}

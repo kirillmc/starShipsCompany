@@ -2,9 +2,10 @@ package v1
 
 import (
 	"context"
+	"log"
+
 	"github.com/kirillmc/starShipsCompany/payment/internal/converter"
 	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
-	"log"
 )
 
 func (a *api) PayOrder(ctx context.Context, req *paymentV1.PayOrderRequest) (*paymentV1.PayOrderResponse, error) {

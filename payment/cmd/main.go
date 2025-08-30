@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	paymentV1API "github.com/kirillmc/starShipsCompany/payment/internal/api/payment/v1"
-	paymentService "github.com/kirillmc/starShipsCompany/payment/internal/service/payment"
 	"log"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
+	paymentV1API "github.com/kirillmc/starShipsCompany/payment/internal/api/payment/v1"
+	paymentService "github.com/kirillmc/starShipsCompany/payment/internal/service/payment"
 	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

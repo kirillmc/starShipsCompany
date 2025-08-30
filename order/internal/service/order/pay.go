@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"fmt"
+
 	"github.com/kirillmc/starShipsCompany/order/internal/converter"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
@@ -15,11 +16,11 @@ func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.T
 	}
 
 	if order.Status == model.PAID {
-		return "", fmt.Errorf("order is aleready paid: %w", serviceErrors.OnConflictErr)
+		return "", fmt.Errorf("order is aleready paid: %w", serviceErrors.ErrOnConflict)
 	}
 
 	if order.Status == model.CANCELLED {
-		return "", fmt.Errorf("order is aleready cancelled: %w", serviceErrors.OnConflictErr)
+		return "", fmt.Errorf("order is aleready cancelled: %w", serviceErrors.ErrOnConflict)
 	}
 
 	transactionUUID, err := s.paymentClient.PayOrder(ctx, params)

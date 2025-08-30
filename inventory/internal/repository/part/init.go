@@ -1,10 +1,11 @@
 package part
 
 import (
+	"time"
+
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 	"github.com/samber/lo"
-	"time"
 )
 
 func setDefaultPartsMap() map[model.PartUUID]*model.Part {

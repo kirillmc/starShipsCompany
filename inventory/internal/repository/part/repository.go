@@ -1,9 +1,10 @@
 package part
 
 import (
+	"sync"
+
 	def "github.com/kirillmc/starShipsCompany/inventory/internal/repository"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
-	"sync"
 )
 
 var _ def.Repository = (*repository)(nil)
