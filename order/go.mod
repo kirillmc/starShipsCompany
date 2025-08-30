@@ -6,8 +6,10 @@ replace github.com/kirillmc/starShipsCompany/shared => ../shared
 
 require (
 	github.com/go-chi/chi/v5 v5.2.2
+	github.com/go-faster/errors v0.7.1
 	github.com/google/uuid v1.6.0
 	github.com/kirillmc/starShipsCompany/shared v0.0.0-00010101000000-000000000000
+	github.com/samber/lo v1.51.0
 	google.golang.org/grpc v1.73.0
 )
 
@@ -15,7 +17,6 @@ require (
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/go-faster/errors v0.7.1 // indirect
 	github.com/go-faster/jx v1.1.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
