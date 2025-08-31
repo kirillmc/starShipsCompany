@@ -12,7 +12,7 @@ import (
 func (a *api) GetPart(ctx context.Context, req *inventoryV1.GetPartRequest) (*inventoryV1.GetPartResponse, error) {
 	part, err := a.inventoryService.Get(ctx, req.GetUuid())
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "failed to find part: %a", err)
+		return nil, status.Errorf(codes.NotFound, "failed to find part: %s", err)
 	}
 
 	partProto := converter.PartToProto(part)

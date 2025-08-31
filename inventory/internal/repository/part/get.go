@@ -17,7 +17,8 @@ func (r *repository) Get(_ context.Context, partUUID model.PartUUID) (*serviceMo
 
 	part, ok := r.parts[partUUID]
 	if !ok {
-		return nil, fmt.Errorf("failed to execute %s method: part with PartUUID %s not found", op, partUUID)
+		return &serviceModel.Part{}, fmt.Errorf("failed to execute %s method: part with PartUUID %s not found",
+			op, partUUID)
 	}
 
 	return converter.PartToService(part), nil

@@ -28,3 +28,22 @@ func PaymentMethodToAPI(method model.PaymentMethod) orderV1.OptPaymentMethod {
 
 	return resp
 }
+
+func PaymentMethodToService(method orderV1.PaymentMethod) model.PaymentMethod {
+	var respMethod model.PaymentMethod
+
+	switch method {
+	case orderV1.PaymentMethodCARD:
+		respMethod = model.CARD
+	case orderV1.PaymentMethodSBP:
+		respMethod = model.SBP
+	case orderV1.PaymentMethodCREDITCARD:
+		respMethod = model.CREDITCARD
+	case orderV1.PaymentMethodINVESTORMONEY:
+		respMethod = model.INVESTORMONEY
+	default:
+		respMethod = model.UNSPECIFIED_PAYMENT_METHOD
+	}
+
+	return respMethod
+}

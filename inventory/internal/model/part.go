@@ -4,7 +4,10 @@ import (
 	"time"
 )
 
-type PartUUID = string
+type (
+	PartUUID = string
+	Tag      = string
+)
 
 type Part struct {
 	UUID          PartUUID
@@ -15,7 +18,7 @@ type Part struct {
 	Category      Category
 	Dimensions    *Dimensions
 	Manufacturer  *Manufacturer
-	Tags          []string
+	Tags          []Tag
 	Metadata      map[string]interface{}
 	CreatedAt     *time.Time
 	UpdatedAt     *time.Time

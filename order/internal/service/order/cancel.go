@@ -9,7 +9,7 @@ import (
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 )
 
-func (s *service) CancelOrder(ctx context.Context, params model.CancelOrderParams) error {
+func (s *service) Cancel(ctx context.Context, params model.CancelOrderParams) error {
 	order, err := s.Get(ctx, converter.CancelOrderParamsToGet(params))
 	if err != nil {
 		return err
