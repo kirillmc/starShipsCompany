@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"context"
 	"testing"
 
 	"github.com/kirillmc/starShipsCompany/inventory/internal/service/mocks"
@@ -11,16 +10,12 @@ import (
 type ServiceSuite struct {
 	suite.Suite
 
-	ctx context.Context
-
 	service *mocks.Service
 
 	api *api
 }
 
 func (s *ServiceSuite) SetupTest() {
-	s.ctx = context.Background()
-
 	s.service = mocks.NewService(s.T())
 
 	s.api = NewAPI(

@@ -1,7 +1,6 @@
 package order
 
 import (
-	"context"
 	"testing"
 
 	clienMocks "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/mocks"
@@ -12,8 +11,6 @@ import (
 type ServiceSuite struct {
 	suite.Suite
 
-	ctx context.Context
-
 	repository      *repoMock.Repository
 	inventoryClient *clienMocks.InventoryClient
 	paymentClient   *clienMocks.PaymentClient
@@ -22,8 +19,6 @@ type ServiceSuite struct {
 }
 
 func (s *ServiceSuite) SetupTest() {
-	s.ctx = context.Background()
-
 	s.inventoryClient = clienMocks.NewInventoryClient(s.T())
 	s.paymentClient = clienMocks.NewPaymentClient(s.T())
 	s.repository = repoMock.NewRepository(s.T())

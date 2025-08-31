@@ -1,12 +1,16 @@
 package part
 
 import (
+	"context"
+
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
 )
 
 func (s *ServiceSuite) TestListWithEmptyFilter() {
 	var (
+		ctx = context.Background()
+
 		filter = &model.PartsFilter{}
 
 		part1 = model.Part{
@@ -36,15 +40,17 @@ func (s *ServiceSuite) TestListWithEmptyFilter() {
 		expectedParts = []*model.Part{&part1N, &part2N, &part3N}
 	)
 
-	s.repository.On("List", s.ctx).Return(foundedParts).Once()
+	s.repository.On("List", ctx).Return(foundedParts).Once()
 
-	filteredParts := s.service.List(s.ctx, filter)
+	filteredParts := s.service.List(ctx, filter)
 	s.Assert().NotNil(filteredParts)
 	s.Assert().ElementsMatch(expectedParts, filteredParts)
 }
 
 func (s *ServiceSuite) TestListWithUUIDFilter() {
 	var (
+		ctx = context.Background()
+
 		part1 = model.Part{
 			UUID:        gofakeit.UUID(),
 			Name:        gofakeit.Name(),
@@ -74,15 +80,17 @@ func (s *ServiceSuite) TestListWithUUIDFilter() {
 		expectedParts = []*model.Part{&part1N, &part3N}
 	)
 
-	s.repository.On("List", s.ctx).Return(foundedParts).Once()
+	s.repository.On("List", ctx).Return(foundedParts).Once()
 
-	filteredParts := s.service.List(s.ctx, filter)
+	filteredParts := s.service.List(ctx, filter)
 	s.Assert().NotNil(filteredParts)
 	s.Assert().ElementsMatch(expectedParts, filteredParts)
 }
 
 func (s *ServiceSuite) TestListWithUUIDAndNameFilter() {
 	var (
+		ctx = context.Background()
+
 		part1 = model.Part{
 			UUID:        gofakeit.UUID(),
 			Name:        gofakeit.Name(),
@@ -114,9 +122,9 @@ func (s *ServiceSuite) TestListWithUUIDAndNameFilter() {
 		expectedParts = []*model.Part{&part1N}
 	)
 
-	s.repository.On("List", s.ctx).Return(foundedParts).Once()
+	s.repository.On("List", ctx).Return(foundedParts).Once()
 
-	filteredParts := s.service.List(s.ctx, filter)
+	filteredParts := s.service.List(ctx, filter)
 	s.Assert().NotNil(filteredParts)
 	s.Assert().ElementsMatch(expectedParts, filteredParts)
 }

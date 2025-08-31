@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -15,6 +16,8 @@ import (
 
 func (s *ServiceSuite) TestGetPartSuccess() {
 	var (
+		ctx = context.Background()
+
 		partUUID = gofakeit.UUID()
 
 		req = &inventoryV1.GetPartRequest{
@@ -49,9 +52,9 @@ func (s *ServiceSuite) TestGetPartSuccess() {
 		expectedPart = converter.PartToProto(foundedPart)
 	)
 
-	s.service.On("Get", s.ctx, req.GetUuid()).Return(foundedPart, foundedErr).Once()
+	s.service.On("Get", ctx, req.GetUuid()).Return(foundedPart, foundedErr).Once()
 
-	resp, err := s.api.GetPart(s.ctx, req)
+	resp, err := s.api.GetPart(ctx, req)
 	s.Assert().NoError(err)
 	s.Assert().NotNil(resp)
 	s.Assert().Equal(expectedPart, resp.Part)
@@ -59,6 +62,8 @@ func (s *ServiceSuite) TestGetPartSuccess() {
 
 func (s *ServiceSuite) TestFailedGetPart() {
 	var (
+		ctx = context.Background()
+
 		partUUID = gofakeit.UUID()
 
 		req = &inventoryV1.GetPartRequest{
@@ -71,9 +76,9 @@ func (s *ServiceSuite) TestFailedGetPart() {
 		expectedErr = status.Errorf(codes.NotFound, "failed to find part: %s", foundedErr)
 	)
 
-	s.service.On("Get", s.ctx, req.GetUuid()).Return(foundedPart, foundedErr).Once()
+	s.service.On("Get", ctx, req.GetUuid()).Return(foundedPart, foundedErr).Once()
 
-	_, err := s.api.GetPart(s.ctx, req)
+	_, err := s.api.GetPart(ctx, req)
 	s.Assert().Error(err)
 	s.Assert().Equal(expectedErr, err)
 }
