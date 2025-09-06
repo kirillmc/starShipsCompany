@@ -59,7 +59,7 @@ func (s *ServiceSuite) TestFailedPayUnknownOrder() {
 		foundedOrder           = model.Order{}
 	)
 
-	s.repository.On("Get", ctx, getOrderParams).
+	s.repository.On("Get", ctx, getOrderParams.OrderUUID).
 		Return(foundedOrder, serviceErrors.ErrNotFound).Once()
 
 	transactionUUID, err := s.service.Pay(ctx, params)
@@ -88,7 +88,7 @@ func (s *ServiceSuite) TestFailedPayAlreadyPayedOrder() {
 		}
 	)
 
-	s.repository.On("Get", ctx, getOrderParams).
+	s.repository.On("Get", ctx, getOrderParams.OrderUUID).
 		Return(foundedOrder, nil).Once()
 
 	transactionUUID, err := s.service.Pay(ctx, params)
