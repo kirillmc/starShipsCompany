@@ -4,21 +4,20 @@ import (
 	"context"
 	"fmt"
 
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
-	serviceModel "github.com/kirillmc/starShipsCompany/order/internal/model"
+	model "github.com/kirillmc/starShipsCompany/order/internal/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/repository/converter"
-	"github.com/kirillmc/starShipsCompany/order/internal/repository/model"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 )
 
-func (r *repository) Get(_ context.Context, params model.GetOrderParams) (serviceModel.Order, error) {
+func (r *repository) Get(_ context.Context, orderUUID model.OrderUUID) (model.Order, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	order, ok := r.orders[params.OrderUUID]
+	order, ok := r.orders[orderUUID]
 	if !ok {
-		return serviceModel.Order{}, fmt.Errorf("failed to find order with UUID %s: %w",
-			params.OrderUUID, serviceErrors.ErrNotFound)
+		return model.Order{}, fmt.Errorf("failed to find order with UUID %s: %w",
+			orderUUID, serviceErrors.ErrNotFound)
 	}
 
-	return converter.OrderToService(order), nil
+	return converter.ToModelOrder(order), nil
 }

@@ -5,17 +5,17 @@ import (
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 
-func PaymentMethodToAPI(method model.PaymentMethod) orderV1.OptPaymentMethod {
+func ToAPIPaymentMethod(method model.PaymentMethod) orderV1.OptPaymentMethod {
 	var respMethod orderV1.PaymentMethod
 
 	switch method {
-	case model.CARD:
+	case model.PaymentMethodCard:
 		respMethod = orderV1.PaymentMethodCARD
-	case model.SBP:
+	case model.PaymentMethodSBP:
 		respMethod = orderV1.PaymentMethodSBP
-	case model.CREDITCARD:
+	case model.PaymentMethodCreditCard:
 		respMethod = orderV1.PaymentMethodCREDITCARD
-	case model.INVESTORMONEY:
+	case model.PaymentMethodInvestorMoney:
 		respMethod = orderV1.PaymentMethodINVESTORMONEY
 	default:
 		respMethod = orderV1.PaymentMethodUNSPECIFIED
@@ -29,20 +29,20 @@ func PaymentMethodToAPI(method model.PaymentMethod) orderV1.OptPaymentMethod {
 	return resp
 }
 
-func PaymentMethodToService(method orderV1.PaymentMethod) model.PaymentMethod {
+func ToModelPaymentMethod(method orderV1.PaymentMethod) model.PaymentMethod {
 	var respMethod model.PaymentMethod
 
 	switch method {
 	case orderV1.PaymentMethodCARD:
-		respMethod = model.CARD
+		respMethod = model.PaymentMethodCard
 	case orderV1.PaymentMethodSBP:
-		respMethod = model.SBP
+		respMethod = model.PaymentMethodSBP
 	case orderV1.PaymentMethodCREDITCARD:
-		respMethod = model.CREDITCARD
+		respMethod = model.PaymentMethodCreditCard
 	case orderV1.PaymentMethodINVESTORMONEY:
-		respMethod = model.INVESTORMONEY
+		respMethod = model.PaymentMethodInvestorMoney
 	default:
-		respMethod = model.UNSPECIFIED_PAYMENT_METHOD
+		respMethod = model.PaymentMethodUnspecified
 	}
 
 	return respMethod

@@ -6,9 +6,8 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/kirillmc/starShipsCompany/order/internal/converter"
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 )
 
 func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
@@ -23,8 +22,8 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 		return model.OrderInfo{}, fmt.Errorf("not enough parts: %w", serviceErrors.ErrInternalServer)
 	}
 
-	var totalPrice float64
-	partsUUIDS := make([]string, 0, len(parts))
+	var totalPrice model.Price
+	partsUUIDS := make([]model.PartUUID, 0, len(parts))
 	for _, part := range parts {
 		totalPrice += part.Price
 		partsUUIDS = append(partsUUIDS, part.UUID)
@@ -41,7 +40,13 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 			fmt.Errorf("order with UUID %s already exists: %w", orderUUID, serviceErrors.ErrOnConflict)
 	}
 
-	orderInfo, err := s.repo.Create(ctx, converter.ToCreateOrderRepo(orderUUID, userUUID, partsUUIDS, totalPrice))
+	createOrderInfo := model.CreateOrder{
+		OrderUUID:  orderUUID,
+		UserUUID:   userUUID,
+		PartsUUIDS: partsUUIDS,
+		TotalPrice: totalPrice,
+	}
+	orderInfo, err := s.repo.Create(ctx, createOrderInfo)
 	if err != nil {
 		return model.OrderInfo{}, err
 	}

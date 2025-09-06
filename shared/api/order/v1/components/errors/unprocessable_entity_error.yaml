@@ -10,4 +10,4 @@ properties:
   message:
     type: string
     description: Описание ошибки
-    example: "Unprocessable entity error occurred"
+    example: "Unprocessable entity serviceErrors occurred"

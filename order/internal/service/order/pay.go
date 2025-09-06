@@ -4,22 +4,22 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/kirillmc/starShipsCompany/order/internal/converter"
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
+	"github.com/samber/lo"
 )
 
 func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.TransactionUUID, error) {
-	order, err := s.Get(ctx, model.GetOrderParams{OrderUUID: params.OrderUUID})
+	order, err := s.repo.Get(ctx, params.OrderUUID)
 	if err != nil {
 		return "", err
 	}
 
-	if order.Status == model.PAID {
+	if order.Status == model.OrderStatusPaid {
 		return "", fmt.Errorf("order is aleready paid: %w", serviceErrors.ErrOnConflict)
 	}
 
-	if order.Status == model.CANCELLED {
+	if order.Status == model.OrderStatusCancelled {
 		return "", fmt.Errorf("order is aleready cancelled: %w", serviceErrors.ErrOnConflict)
 	}
 
@@ -28,7 +28,12 @@ func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.T
 		return "", fmt.Errorf("failed to pay order: %w", err)
 	}
 
-	err = s.repo.SetStatus(ctx, params.OrderUUID, transactionUUID, converter.OrderStatusToRepo(model.PAID))
+	updateOrderParams := model.UpdateOrderParams{
+		OrderUUID:       params.OrderUUID,
+		TransactionUUID: &transactionUUID,
+		Status:          lo.ToPtr(model.OrderStatusPaid),
+	}
+	err = s.repo.UpdateOrder(ctx, updateOrderParams)
 	if err != nil {
 		return "", err
 	}

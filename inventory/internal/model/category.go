@@ -1,11 +1,11 @@
 package model
 
-type Category int32
+type Category string
 
 const (
-	UNSPECIFIED Category = iota
-	ENGINE
-	FUEL
-	PORTHOLE
-	WING
+	Unspecified Category = "UNSPECIFIED"
+	Engine      Category = "ENGINE"
+	Fuel        Category = "FUEL"
+	Porthole    Category = "PORTHOLE"
+	Wing        Category = "WING"
 )

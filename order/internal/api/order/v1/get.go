@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-faster/errors"
 	"github.com/kirillmc/starShipsCompany/order/internal/converter"
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 
@@ -27,7 +27,6 @@ func (a *api) GetOrder(ctx context.Context, params orderV1.GetOrderParams) (orde
 		}, nil
 	}
 
-	orderResp := converter.OrderToGetOrderRes(order)
-
+	orderResp := converter.ToAPIGetOrderResponse(order)
 	return &orderResp, nil
 }

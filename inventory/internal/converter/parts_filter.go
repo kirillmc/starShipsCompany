@@ -5,14 +5,14 @@ import (
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 )
 
-func PartsFilterToModel(partsFiler *inventoryV1.PartsFilter) *model.PartsFilter {
-	partsFilterModel := &model.PartsFilter{
+func ToModelPartsFilter(partsFiler *inventoryV1.PartsFilter) *model.PartsFilter {
+	partsFilterMapped := &model.PartsFilter{
 		UUIDs:                 partsFiler.Uuids,
 		Names:                 partsFiler.Names,
-		Categories:            CATEGORIESToModel(partsFiler.Categories),
+		Categories:            ToModelCategories(partsFiler.Categories),
 		ManufacturerCountries: partsFiler.ManufacturerCountries,
 		Tags:                  partsFiler.Tags,
 	}
 
-	return partsFilterModel
+	return partsFilterMapped
 }

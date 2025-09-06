@@ -5,12 +5,12 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
-func ManufacturerToService(manufacturer *model.Manufacturer) *serviceModel.Manufacturer {
-	manufacturerService := &serviceModel.Manufacturer{
+func ToModelManufacturer(manufacturer *model.Manufacturer) *serviceModel.Manufacturer {
+	manufacturerMapped := &serviceModel.Manufacturer{
 		Name:    manufacturer.Name,
 		Country: manufacturer.Country,
 		Website: manufacturer.Website,
 	}
 
-	return manufacturerService
+	return manufacturerMapped
 }

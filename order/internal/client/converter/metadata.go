@@ -2,11 +2,10 @@ package converter
 
 import inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 
-func MetadataToModel(metadata map[string]*inventoryV1.Value) map[string]interface{} {
-	metadataProto := make(map[string]interface{}, len(metadata))
+func ToModelMetadata(metadata map[string]*inventoryV1.Value) map[string]interface{} {
+	metadataMapped := make(map[string]interface{}, len(metadata))
 	for key, value := range metadata {
-		metadataProto[key] = value
+		metadataMapped[key] = value
 	}
-
-	return metadataProto
+	return metadataMapped
 }

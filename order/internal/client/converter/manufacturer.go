@@ -5,12 +5,11 @@ import (
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 )
 
-func ManufacturerToModel(manufacturer *inventoryV1.Manufacturer) *model.Manufacturer {
-	manufacturerModel := &model.Manufacturer{
+func ToModelManufacturer(manufacturer *inventoryV1.Manufacturer) *model.Manufacturer {
+	manufacturerMapped := &model.Manufacturer{
 		Name:    manufacturer.Name,
 		Country: manufacturer.Country,
 		Website: manufacturer.Website,
 	}
-
-	return manufacturerModel
+	return manufacturerMapped
 }

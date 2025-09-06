@@ -3,9 +3,9 @@ package model
 type PaymentMethod string
 
 const (
-	UNSPECIFIED_METHOD PaymentMethod = "UNSPECIFIED"
-	CARD               PaymentMethod = "CARD"
-	SBP                PaymentMethod = "SBP"
-	CREDITCARD         PaymentMethod = "CREDIT_CARD"
-	INVESTORMONEY      PaymentMethod = "INVESTOR_MONEY"
+	PaymentMethodUnspecified   PaymentMethod = "UNSPECIFIED"
+	PaymentMethodCard          PaymentMethod = "CARD"
+	PaymentMethodSBP           PaymentMethod = "SBP"
+	PaymentMethodCreditCard    PaymentMethod = "CREDIT_CARD"
+	PaymentMethodInvestorMoney PaymentMethod = "INVESTOR_MONEY"
 )

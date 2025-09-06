@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 

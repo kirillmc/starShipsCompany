@@ -7,21 +7,21 @@ import (
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 )
 
-func PartsFilterToProto(partsFiler model.PartsFilter) (*inventoryV1.PartsFilter, error) {
+func ToProtoPartsFilter(partsFiler model.PartsFilter) (*inventoryV1.PartsFilter, error) {
 	err := checkFilterParams(partsFiler)
 	if err != nil {
 		return &inventoryV1.PartsFilter{}, err
 	}
 
-	partsFilter := &inventoryV1.PartsFilter{
+	partsFilterMapped := &inventoryV1.PartsFilter{
 		Uuids:                 partsFiler.UUIDs,
 		Names:                 partsFiler.Names,
-		Categories:            CategoriesToProto(partsFiler.Categories),
+		Categories:            ToProtoCategories(partsFiler.Categories),
 		ManufacturerCountries: partsFiler.ManufacturerCountries,
 		Tags:                  partsFiler.Tags,
 	}
 
-	return partsFilter, nil
+	return partsFilterMapped, nil
 }
 
 func checkFilterParams(partsFiler model.PartsFilter) error {

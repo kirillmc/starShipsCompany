@@ -8,8 +8,7 @@ import (
 )
 
 func (c *client) PayOrder(ctx context.Context, payOrderInfo model.PayOrderParams) (model.TransactionUUID, error) {
-	req := converter.ModelToPayOrderRequest(payOrderInfo)
-	resp, err := c.generatedClient.PayOrder(ctx, req)
+	resp, err := c.generatedClient.PayOrder(ctx, converter.ToProtoPayOrderRequest(payOrderInfo))
 	if err != nil {
 		return "", err
 	}

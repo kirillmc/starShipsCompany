@@ -5,9 +5,9 @@ import (
 	"errors"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/kirillmc/starShipsCompany/order/internal/converter"
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
+	"github.com/samber/lo"
 )
 
 func (s *ServiceSuite) TestPayOrderSuccess() {
@@ -17,7 +17,7 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 		params = model.PayOrderParams{
 			OrderUUID:     gofakeit.UUID(),
 			UserUUID:      gofakeit.UUID(),
-			PaymentMethod: model.CARD,
+			PaymentMethod: model.PaymentMethodCard,
 		}
 
 		getOrderParams         = model.GetOrderParams{OrderUUID: params.OrderUUID}
@@ -25,13 +25,18 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 		foundedOrder           = model.Order{
 			OrderUUID: params.OrderUUID,
 		}
+
+		updateOrderParams = model.UpdateOrderParams{
+			OrderUUID:       params.OrderUUID,
+			TransactionUUID: &foundedTransactionUUID,
+			Status:          lo.ToPtr(model.OrderStatusPaid),
+		}
 	)
 
-	s.repository.On("Get", ctx, converter.GetOrderParamsToRepo(getOrderParams)).
+	s.repository.On("Get", ctx, getOrderParams.OrderUUID).
 		Return(foundedOrder, nil).Once()
 	s.paymentClient.On("PayOrder", ctx, params).Return(foundedTransactionUUID, nil).Once()
-	s.repository.On("SetStatus", ctx, params.OrderUUID, foundedTransactionUUID,
-		converter.OrderStatusToRepo(model.PAID)).Return(nil).Once()
+	s.repository.On("UpdateOrder", ctx, updateOrderParams).Return(nil).Once()
 
 	transactionUUID, err := s.service.Pay(ctx, params)
 	s.Assert().NoError(err)
@@ -45,7 +50,7 @@ func (s *ServiceSuite) TestFailedPayUnknownOrder() {
 		params = model.PayOrderParams{
 			OrderUUID:     gofakeit.UUID(),
 			UserUUID:      gofakeit.UUID(),
-			PaymentMethod: model.CARD,
+			PaymentMethod: model.PaymentMethodCard,
 		}
 
 		getOrderParams         = model.GetOrderParams{OrderUUID: params.OrderUUID}
@@ -54,7 +59,7 @@ func (s *ServiceSuite) TestFailedPayUnknownOrder() {
 		foundedOrder           = model.Order{}
 	)
 
-	s.repository.On("Get", ctx, converter.GetOrderParamsToRepo(getOrderParams)).
+	s.repository.On("Get", ctx, getOrderParams).
 		Return(foundedOrder, serviceErrors.ErrNotFound).Once()
 
 	transactionUUID, err := s.service.Pay(ctx, params)
@@ -70,7 +75,7 @@ func (s *ServiceSuite) TestFailedPayAlreadyPayedOrder() {
 		params = model.PayOrderParams{
 			OrderUUID:     gofakeit.UUID(),
 			UserUUID:      gofakeit.UUID(),
-			PaymentMethod: model.CARD,
+			PaymentMethod: model.PaymentMethodCard,
 		}
 
 		getOrderParams         = model.GetOrderParams{OrderUUID: params.OrderUUID}
@@ -79,11 +84,11 @@ func (s *ServiceSuite) TestFailedPayAlreadyPayedOrder() {
 		foundedOrder           = model.Order{
 			OrderUUID: params.OrderUUID,
 			UserUUID:  params.UserUUID,
-			Status:    model.PAID,
+			Status:    model.OrderStatusPaid,
 		}
 	)
 
-	s.repository.On("Get", ctx, converter.GetOrderParamsToRepo(getOrderParams)).
+	s.repository.On("Get", ctx, getOrderParams).
 		Return(foundedOrder, nil).Once()
 
 	transactionUUID, err := s.service.Pay(ctx, params)

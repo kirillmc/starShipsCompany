@@ -2,15 +2,15 @@ package v1
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/kirillmc/starShipsCompany/order/internal/client/converter"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
+	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 )
 
 func (c *client) ListParts(ctx context.Context, filter model.PartsFilter) ([]model.Part, error) {
-	filterProto, err := converter.PartsFilterToProto(filter)
+	filterProto, err := converter.ToProtoPartsFilter(filter)
 	if err != nil {
 		return []model.Part{}, err
 	}
@@ -22,10 +22,8 @@ func (c *client) ListParts(ctx context.Context, filter model.PartsFilter) ([]mod
 	}
 
 	if len(resp.Parts) == 0 {
-		return []model.Part{}, fmt.Errorf("failed to find parts")
+		return []model.Part{}, serviceErrors.ErrNotFoundFromRemoteInventory
 	}
 
-	parts := converter.PartsToModel(resp.Parts)
-
-	return parts, nil
+	return converter.ToModelParts(resp.Parts), nil
 }

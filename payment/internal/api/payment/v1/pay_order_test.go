@@ -17,7 +17,7 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 			UserUuid:      gofakeit.UUID(),
 			PaymentMethod: paymentV1.PAYMENTMETHOD_CARD,
 		}
-		payOrderInfo = converter.PayOrderRequestToModel(req)
+		payOrderInfo = converter.ToModelPayOrderInfo(req)
 
 		transactionUUID = gofakeit.UUID()
 	)

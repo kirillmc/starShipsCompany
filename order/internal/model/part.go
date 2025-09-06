@@ -11,7 +11,7 @@ type Part struct {
 	UUID          PartUUID
 	Name          string
 	Description   string
-	Price         float64
+	Price         Price
 	StockQuantity int64
 	Category      Category
 	Dimensions    *Dimensions

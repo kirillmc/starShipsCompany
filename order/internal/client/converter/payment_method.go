@@ -5,15 +5,15 @@ import (
 	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
 )
 
-func PaymentMethodToProto(method model.PaymentMethod) paymentV1.PAYMENTMETHOD {
+func ToProtoPaymentMethod(method model.PaymentMethod) paymentV1.PAYMENTMETHOD {
 	switch method {
-	case model.CARD:
+	case model.PaymentMethodCard:
 		return paymentV1.PAYMENTMETHOD_CARD
-	case model.SBP:
+	case model.PaymentMethodSBP:
 		return paymentV1.PAYMENTMETHOD_SBP
-	case model.CREDITCARD:
+	case model.PaymentMethodCreditCard:
 		return paymentV1.PAYMENTMETHOD_CREDIT_CARD
-	case model.INVESTORMONEY:
+	case model.PaymentMethodInvestorMoney:
 		return paymentV1.PAYMENTMETHOD_INVESTOR_MONEY
 	default:
 		return paymentV1.PAYMENTMETHOD_UNSPECIFIED

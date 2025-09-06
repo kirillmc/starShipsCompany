@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/kirillmc/starShipsCompany/order/internal/converter"
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 
@@ -18,7 +18,7 @@ func (a *api) PayOrder(ctx context.Context, req *orderV1.PayOrderRequest, params
 		}, nil
 	}
 
-	transactionUUID, err := a.orderService.Pay(ctx, converter.ToPayOrderParams(req, params))
+	transactionUUID, err := a.orderService.Pay(ctx, converter.ToModelPayOrderParams(req, params))
 	if err != nil {
 		if errors.Is(err, serviceErrors.ErrNotFound) {
 			return &orderV1.NotFoundError{

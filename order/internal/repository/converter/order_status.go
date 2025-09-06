@@ -1,19 +1,32 @@
 package converter
 
 import (
-	serviceModel "github.com/kirillmc/starShipsCompany/order/internal/model"
-	"github.com/kirillmc/starShipsCompany/order/internal/repository/model"
+	model "github.com/kirillmc/starShipsCompany/order/internal/model"
+	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/model"
 )
 
-func OrderStatusToService(status model.OrderStatus) serviceModel.OrderStatus {
+func ToModelOrderStatus(status repoModel.OrderStatus) model.OrderStatus {
 	switch status {
-	case model.PENDINGPAYMENT:
-		return serviceModel.PENDINGPAYMENT
-	case model.PAID:
-		return serviceModel.PAID
-	case model.CANCELLED:
-		return serviceModel.CANCELLED
+	case repoModel.OrderStatusPendingPayment:
+		return model.OrderStatusPendingPayment
+	case repoModel.OrderStatusPaid:
+		return model.OrderStatusPaid
+	case repoModel.OrderStatusCancelled:
+		return model.OrderStatusCancelled
 	default:
-		return serviceModel.UNSPECIFIED_ORDER_STATUS
+		return model.OrderStatusUnspecified
+	}
+}
+
+func ToRepoOrderStatus(status model.OrderStatus) repoModel.OrderStatus {
+	switch status {
+	case model.OrderStatusPendingPayment:
+		return repoModel.OrderStatusPendingPayment
+	case model.OrderStatusPaid:
+		return repoModel.OrderStatusPaid
+	case model.OrderStatusCancelled:
+		return repoModel.OrderStatusCancelled
+	default:
+		return repoModel.OrderStatusUnspecified
 	}
 }

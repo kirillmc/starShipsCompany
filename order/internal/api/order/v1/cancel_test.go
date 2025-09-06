@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/service"
 	"github.com/kirillmc/starShipsCompany/order/internal/service/mocks"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

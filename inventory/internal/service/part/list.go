@@ -60,6 +60,7 @@ func applySimpleFieldFilter[T allowedFilterTypes](filterValues []T, allowedParts
 			res = append(res, part)
 		}
 	}
+
 	return res
 }
 
@@ -70,7 +71,6 @@ func applyTagsFilter(filterValues []string, allowedParts []*model.Part) []*model
 
 	tagsSet := getFilterValuesSet[string](filterValues)
 	var res []*model.Part
-
 	for _, part := range allowedParts {
 		for _, tag := range part.Tags {
 			if _, ok := tagsSet[tag]; ok {
@@ -93,7 +93,6 @@ func getFilterValuesSet[T allowedFilterTypes](filterValues []T) map[T]struct{} {
 	}
 
 	filterSet := make(map[T]struct{})
-
 	for _, filterValue := range filterValues {
 		if _, ok := filterSet[filterValue]; !ok {
 			filterSet[filterValue] = struct{}{}

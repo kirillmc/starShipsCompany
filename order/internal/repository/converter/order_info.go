@@ -1,15 +1,13 @@
 package converter
 
 import (
-	serviceModel "github.com/kirillmc/starShipsCompany/order/internal/model"
-	"github.com/kirillmc/starShipsCompany/order/internal/repository/model"
+	model "github.com/kirillmc/starShipsCompany/order/internal/model"
+	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/model"
 )
 
-func ToServiceOrderInfo(orderUUID model.OrderUUID, totalPrice float64) serviceModel.OrderInfo {
-	serviceOrderInfo := serviceModel.OrderInfo{
+func ToModelOrderInfo(orderUUID repoModel.OrderUUID, totalPrice repoModel.Price) model.OrderInfo {
+	return model.OrderInfo{
 		OrderUUID:  orderUUID,
 		TotalPrice: totalPrice,
 	}
-
-	return serviceOrderInfo
 }

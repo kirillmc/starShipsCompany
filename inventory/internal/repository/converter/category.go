@@ -1,21 +1,21 @@
 package converter
 
 import (
-	serviceModel "github.com/kirillmc/starShipsCompany/inventory/internal/model"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
+	model "github.com/kirillmc/starShipsCompany/inventory/internal/model"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
-func CategoryToService(category model.Category) serviceModel.Category {
+func ToModelCategory(category repoModel.Category) model.Category {
 	switch category {
-	case model.ENGINE:
-		return serviceModel.ENGINE
-	case model.FUEL:
-		return serviceModel.FUEL
-	case model.PORTHOLE:
-		return serviceModel.PORTHOLE
-	case model.WING:
-		return serviceModel.WING
+	case repoModel.Engine:
+		return model.Engine
+	case repoModel.Fuel:
+		return model.Fuel
+	case repoModel.Porthole:
+		return model.Porthole
+	case repoModel.Wing:
+		return model.Wing
 	default:
-		return serviceModel.UNSPECIFIED
+		return model.Unspecified
 	}
 }

@@ -3,26 +3,25 @@ package order
 import (
 	"context"
 
-	serviceModel "github.com/kirillmc/starShipsCompany/order/internal/model"
+	model "github.com/kirillmc/starShipsCompany/order/internal/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/repository/converter"
-	"github.com/kirillmc/starShipsCompany/order/internal/repository/model"
+	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/model"
 )
 
-func (r *repository) Create(_ context.Context, order model.Order) (serviceModel.OrderInfo, error) {
+func (r *repository) Create(_ context.Context, order model.CreateOrder) (model.OrderInfo, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.orders[order.OrderUUID] = &model.Order{
-		OrderUUID:       order.OrderUUID,
-		UserUUID:        order.UserUUID,
-		PartUUIDs:       order.PartUUIDs,
-		TotalPrice:      order.TotalPrice,
-		TransactionUUID: order.TransactionUUID,
-		PaymentMethod:   order.PaymentMethod,
-		Status:          order.Status,
+	orderRepo := converter.ToRepoCreateOrder(order)
+	r.orders[order.OrderUUID] = &repoModel.Order{
+		OrderUUID:       orderRepo.OrderUUID,
+		UserUUID:        orderRepo.UserUUID,
+		PartUUIDs:       orderRepo.PartUUIDs,
+		TotalPrice:      orderRepo.TotalPrice,
+		TransactionUUID: orderRepo.TransactionUUID,
+		PaymentMethod:   orderRepo.PaymentMethod,
+		Status:          orderRepo.Status,
 	}
 
-	orderInfo := converter.ToServiceOrderInfo(r.orders[order.OrderUUID].OrderUUID, r.orders[order.OrderUUID].TotalPrice)
-
-	return orderInfo, nil
+	return converter.ToModelOrderInfo(r.orders[order.OrderUUID].OrderUUID, r.orders[order.OrderUUID].TotalPrice), nil
 }

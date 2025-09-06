@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/kirillmc/starShipsCompany/order/internal/converter"
-	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/error"
+	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 
@@ -33,7 +33,6 @@ func (a *api) CreateOrder(ctx context.Context, req *orderV1.CreateOrderRequest) 
 		}, nil
 	}
 
-	resp := converter.OrderInfoToCreateOrderResponse(orderInfo)
-
+	resp := converter.ToAPICreateOrderResponse(orderInfo)
 	return &resp, nil
 }

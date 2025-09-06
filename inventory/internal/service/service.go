@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
+	model "github.com/kirillmc/starShipsCompany/inventory/internal/model"
 )
 
 type Service interface {

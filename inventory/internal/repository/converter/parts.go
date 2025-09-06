@@ -1,15 +1,15 @@
 package converter
 
 import (
-	serviceModel "github.com/kirillmc/starShipsCompany/inventory/internal/model"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
+	model "github.com/kirillmc/starShipsCompany/inventory/internal/model"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/model"
 )
 
-func PartsToService(parts map[string]*model.Part) map[string]*serviceModel.Part {
-	partsService := make(map[string]*serviceModel.Part, len(parts))
+func ToModelParts(parts map[string]*repoModel.Part) map[string]*model.Part {
+	partsMapped := make(map[string]*model.Part, len(parts))
 	for uuid, part := range parts {
-		partsService[uuid] = PartToService(part)
+		partsMapped[uuid] = ToModelPart(part)
 	}
 
-	return partsService
+	return partsMapped
 }

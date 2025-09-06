@@ -3,8 +3,8 @@ package model
 type OrderStatus string
 
 const (
-	UNSPECIFIED_ORDER_STATUS OrderStatus = "UNSPECIFIED"
-	PENDINGPAYMENT           OrderStatus = "PENDING_PAYMENT"
-	PAID                     OrderStatus = "PAID"
-	CANCELLED                OrderStatus = "CANCELLED"
+	OrderStatusUnspecified    OrderStatus = "UNSPECIFIED"
+	OrderStatusPendingPayment OrderStatus = "PENDING_PAYMENT"
+	OrderStatusPaid           OrderStatus = "PAID"
+	OrderStatusCancelled      OrderStatus = "CANCELLED"
 )

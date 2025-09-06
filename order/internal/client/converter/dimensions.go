@@ -5,13 +5,13 @@ import (
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 )
 
-func DimensionsToModel(dimensions *inventoryV1.Dimensions) *model.Dimensions {
-	dimensionsModel := &model.Dimensions{
+func ToModelDimensions(dimensions *inventoryV1.Dimensions) *model.Dimensions {
+	dimensionsMapped := &model.Dimensions{
 		Length: dimensions.Length,
 		Width:  dimensions.Width,
 		Height: dimensions.Height,
 		Weight: dimensions.Weight,
 	}
 
-	return dimensionsModel
+	return dimensionsMapped
 }

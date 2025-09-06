@@ -8,6 +8,7 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/converter"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"github.com/samber/lo"
 	"google.golang.org/grpc/codes"
@@ -30,7 +31,7 @@ func (s *ServiceSuite) TestGetPartSuccess() {
 			Description:   gofakeit.Slogan(),
 			Price:         gofakeit.Price(0, 101),
 			StockQuantity: int64(gofakeit.UintRange(0, 101)),
-			Category:      model.ENGINE,
+			Category:      model.Engine,
 			Dimensions: &model.Dimensions{
 				Length: 11,
 				Width:  11,
@@ -49,7 +50,7 @@ func (s *ServiceSuite) TestGetPartSuccess() {
 		}
 		foundedErr error = nil
 
-		expectedPart = converter.PartToProto(foundedPart)
+		expectedPart = converter.ToProtoPart(foundedPart)
 	)
 
 	s.service.On("Get", ctx, req.GetUuid()).Return(foundedPart, foundedErr).Once()
@@ -73,7 +74,7 @@ func (s *ServiceSuite) TestFailedGetPart() {
 		foundedPart = &model.Part{}
 		foundedErr  = fmt.Errorf("failed to execute Gwt method: part with PartUUID %s not found", partUUID)
 
-		expectedErr = status.Errorf(codes.NotFound, "failed to find part: %s", foundedErr)
+		expectedErr = status.Errorf(codes.Internal, "failed to find part: %s", serviceErrors.ErrInternalServer)
 	)
 
 	s.service.On("Get", ctx, req.GetUuid()).Return(foundedPart, foundedErr).Once()

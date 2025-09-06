@@ -1,11 +1,11 @@
 package model
 
-type PaymentMethod int32
+type PaymentMethod string
 
 const (
-	UNSPECIFIED PaymentMethod = iota
-	CARD
-	SBP
-	CREDITCARD
-	INVESTORMONEY
+	Unspecified   PaymentMethod = "UNSPECIFIED"
+	Card          PaymentMethod = "CARD"
+	SBP           PaymentMethod = "SBP"
+	CreditCard    PaymentMethod = "CREDITCARD"
+	InvestorMoney PaymentMethod = "INVESTORMONEY"
 )

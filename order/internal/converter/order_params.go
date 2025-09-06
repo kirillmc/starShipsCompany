@@ -5,17 +5,9 @@ import (
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 
-func CancelOrderParamsToGet(params model.CancelOrderParams) model.GetOrderParams {
-	res := model.GetOrderParams(params)
-
-	return res
-}
-
-func ToPayOrderParams(req *orderV1.PayOrderRequest, params orderV1.PayOrderParams) model.PayOrderParams {
-	res := model.PayOrderParams{
+func ToModelPayOrderParams(req *orderV1.PayOrderRequest, params orderV1.PayOrderParams) model.PayOrderParams {
+	return model.PayOrderParams{
 		OrderUUID:     params.OrderUUID.String(),
-		PaymentMethod: PaymentMethodToService(req.PaymentMethod),
+		PaymentMethod: ToModelPaymentMethod(req.PaymentMethod),
 	}
-
-	return res
 }

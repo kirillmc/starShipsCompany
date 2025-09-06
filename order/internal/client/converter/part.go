@@ -6,25 +6,25 @@ import (
 	"github.com/samber/lo"
 )
 
-func PartToModel(part *inventoryV1.Part) model.Part {
+func ToModelPart(part *inventoryV1.Part) model.Part {
 	if part == nil {
 		return model.Part{}
 	}
 
-	partProto := model.Part{
+	partMapped := model.Part{
 		UUID:          part.Uuid,
 		Name:          part.Name,
 		Description:   part.Description,
 		Price:         part.Price,
 		StockQuantity: part.StockQuantity,
-		Category:      CategoryToModel(part.Category),
-		Dimensions:    DimensionsToModel(part.Dimensions),
-		Manufacturer:  ManufacturerToModel(part.Manufacturer),
+		Category:      ToModelCategory(part.Category),
+		Dimensions:    ToModelDimensions(part.Dimensions),
+		Manufacturer:  ToModelManufacturer(part.Manufacturer),
 		Tags:          part.Tags,
-		Metadata:      MetadataToModel(part.Metadata),
+		Metadata:      ToModelMetadata(part.Metadata),
 		CreatedAt:     lo.ToPtr(part.CreatedAt.AsTime()),
 		UpdatedAt:     lo.ToPtr(part.UpdatedAt.AsTime()),
 	}
 
-	return partProto
+	return partMapped
 }

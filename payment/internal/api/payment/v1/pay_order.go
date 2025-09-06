@@ -9,8 +9,7 @@ import (
 )
 
 func (a *api) PayOrder(ctx context.Context, req *paymentV1.PayOrderRequest) (*paymentV1.PayOrderResponse, error) {
-	payOrderInfo := converter.PayOrderRequestToModel(req)
-	transactionUUID := a.paymentService.Pay(ctx, payOrderInfo)
+	transactionUUID := a.paymentService.Pay(ctx, converter.ToModelPayOrderInfo(req))
 	log.Printf("Оплата прошла успешно, transaction_uuid: %s", transactionUUID)
 
 	return &paymentV1.PayOrderResponse{
