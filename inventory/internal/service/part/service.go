@@ -1,17 +1,17 @@
 package part
 
 import (
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo"
 	def "github.com/kirillmc/starShipsCompany/inventory/internal/service"
 )
 
 var _ def.Service = (*service)(nil)
 
 type service struct {
-	repo repository.Repository
+	repo mongo.Repository
 }
 
-func NewService(repo repository.Repository) *service {
+func NewService(repo mongo.Repository) *service {
 	return &service{
 		repo: repo,
 	}

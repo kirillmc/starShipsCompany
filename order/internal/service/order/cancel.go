@@ -10,7 +10,7 @@ import (
 )
 
 func (s *service) Cancel(ctx context.Context, params model.CancelOrderParams) error {
-	order, err := s.repo.Get(ctx, params.OrderUUID)
+	order, err := s.orderRepo.Get(ctx, params.OrderUUID)
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func (s *service) Cancel(ctx context.Context, params model.CancelOrderParams) er
 		TransactionUUID: &order.TransactionUUID,
 		Status:          lo.ToPtr(model.OrderStatusCancelled),
 	}
-	err = s.repo.UpdateOrder(ctx, updateOrderParams)
+	err = s.orderRepo.UpdateOrder(ctx, updateOrderParams)
 	if err != nil {
 		return err
 	}

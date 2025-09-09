@@ -3,6 +3,12 @@ package main
 import (
 	"context"
 	"errors"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/joho/godotenv"
+	"github.com/kirillmc/starShipsCompany/order/internal/migrator"
+	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/order"
+	orderPartRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/order_part"
 	"log"
 	"net"
 	"net/http"
@@ -16,7 +22,6 @@ import (
 	orderAPI "github.com/kirillmc/starShipsCompany/order/internal/api/order/v1"
 	inventoryClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/inventory/v1"
 	paymentClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/payment/v1"
-	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/order"
 	orderService "github.com/kirillmc/starShipsCompany/order/internal/service/order"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
@@ -66,8 +71,39 @@ func main() {
 	}()
 	paymentClient := paymentClient.NewClient(paymentV1.NewPaymentServiceClient(connPayment))
 
-	storage := orderRepository.NewRepository()
-	service := orderService.NewService(inventoryClient, paymentClient, storage)
+	err = godotenv.Load(".env")
+	if err != nil {
+		log.Printf("failed to load .env file: %v\n", err)
+		return
+	}
+	dbURI := os.Getenv("DB_URI")
+
+	ctx := context.Background()
+	pool, err := pgxpool.New(ctx, dbURI)
+	if err != nil {
+		log.Printf("failed to connect to database: %v\n", err)
+		return
+	}
+	defer pool.Close()
+
+	err = pool.Ping(ctx)
+	if err != nil {
+		log.Printf("База данных недоступна: %v\n", err)
+		return
+	}
+
+	migrationsDir := os.Getenv("MIGRATIONS_DIR")
+	migratorRunner := migrator.NewMigrator(stdlib.OpenDB(*pool.Config().Copy().ConnConfig), migrationsDir)
+
+	err = migratorRunner.Up()
+	if err != nil {
+		log.Printf("Ошибка миграции базы данных: %v\n", err)
+		return
+	}
+
+	orderStorage := orderRepository.NewRepository(pool)
+	orderPartStorage := orderPartRepository.NewRepository(pool)
+	service := orderService.NewService(pool, inventoryClient, paymentClient, orderStorage, orderPartStorage)
 
 	orderHandler := orderAPI.NewAPI(service)
 

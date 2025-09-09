@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/part"
 	"log"
 	"net"
 	"os"
@@ -9,7 +10,6 @@ import (
 	"syscall"
 
 	inventoryV1API "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
-	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/part"
 	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc"

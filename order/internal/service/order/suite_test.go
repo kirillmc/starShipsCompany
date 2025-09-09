@@ -1,10 +1,10 @@
 package order
 
 import (
+	repoMock "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/mocks"
 	"testing"
 
 	clienMocks "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/mocks"
-	repoMock "github.com/kirillmc/starShipsCompany/order/internal/repository/mocks"
 	"github.com/stretchr/testify/suite"
 )
 
