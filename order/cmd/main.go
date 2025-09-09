@@ -88,7 +88,7 @@ func main() {
 
 	err = pool.Ping(ctx)
 	if err != nil {
-		log.Printf("База данных недоступна: %v\n", err)
+		log.Printf("db is not available: %v\n", err)
 		return
 	}
 
@@ -97,7 +97,7 @@ func main() {
 
 	err = migratorRunner.Up()
 	if err != nil {
-		log.Printf("Ошибка миграции базы данных: %v\n", err)
+		log.Printf("failed to migrate db: %v\n", err)
 		return
 	}
 
@@ -109,7 +109,7 @@ func main() {
 
 	orderServer, err := orderV1.NewServer(orderHandler)
 	if err != nil {
-		log.Printf("ошибка создания сервера OpenAPI: %v", err)
+		log.Printf("failed to create OpenAPI server: %v", err)
 		return
 	}
 

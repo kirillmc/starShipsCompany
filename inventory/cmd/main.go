@@ -69,7 +69,7 @@ func main() {
 	mongoInventoryDB := client.Database(mongoNameDB)
 	repo, err := partRepo.NewRepository(ctx, mongoInventoryDB)
 	if err != nil {
-		log.Fatalf("ошибка инициализации репозитория: %s", err)
+		log.Fatalf("failed to init repo: %s", err)
 	}
 
 	service := partService.NewService(repo)

@@ -19,10 +19,6 @@ func ToRepoUpdateOrderParams(params model.UpdateOrderParams) repoModel.UpdateOrd
 		paramsMapped.UserUUID = lo.ToPtr(*params.UserUUID)
 	}
 
-	if params.PartUUIDs != nil {
-		paramsMapped.PartUUIDs = params.PartUUIDs
-	}
-
 	if params.TotalPrice != nil {
 		paramsMapped.TotalPrice = lo.ToPtr(*params.TotalPrice)
 	}

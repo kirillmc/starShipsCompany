@@ -2,35 +2,57 @@ package order
 
 import (
 	"context"
+	"fmt"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/kirillmc/starShipsCompany/order/internal/repository/pg/converter"
+	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/model"
+	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 
 	model "github.com/kirillmc/starShipsCompany/order/internal/model"
 )
 
-func (r *repository) UpdateOrder(_ context.Context, updateOrderParams model.UpdateOrderParams) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+func (r *repository) UpdateOrder(ctx context.Context, updateOrderParams model.UpdateOrderParams) error {
+	const op = "UpdateOrder"
 
 	updateOrderParamsRepo := converter.ToRepoUpdateOrderParams(updateOrderParams)
 
-	if updateOrderParamsRepo.UserUUID != nil {
-		r.orders[updateOrderParamsRepo.OrderUUID].UserUUID = *updateOrderParamsRepo.UserUUID
+	updateBuilder := sq.Update(tableName).
+		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{orderUUIDColumn: updateOrderParamsRepo.OrderUUID})
+	updateBuilder = applyUpdateFilter(updateBuilder, updateOrderParamsRepo)
+
+	query, args, err := updateBuilder.ToSql()
+	if err != nil {
+		return fmt.Errorf("%w: failed to build %s query: %s",
+			serviceErrors.ErrInternalServer, op, err)
 	}
-	if updateOrderParamsRepo.PartUUIDs != nil {
-		r.orders[updateOrderParamsRepo.OrderUUID].PartUUIDs = updateOrderParamsRepo.PartUUIDs
-	}
-	if updateOrderParamsRepo.TotalPrice != nil {
-		r.orders[updateOrderParamsRepo.OrderUUID].TotalPrice = *updateOrderParamsRepo.TotalPrice
-	}
-	if updateOrderParamsRepo.TransactionUUID != nil {
-		r.orders[updateOrderParamsRepo.OrderUUID].TransactionUUID = *updateOrderParamsRepo.TransactionUUID
-	}
-	if updateOrderParamsRepo.PaymentMethod != nil {
-		r.orders[updateOrderParamsRepo.OrderUUID].PaymentMethod = *updateOrderParamsRepo.PaymentMethod
-	}
-	if updateOrderParamsRepo.Status != nil {
-		r.orders[updateOrderParamsRepo.OrderUUID].Status = *updateOrderParamsRepo.Status
+
+	_, err = r.pool.Exec(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("%w: failed to execute %s query: %s",
+			serviceErrors.ErrInternalServer, op, err)
 	}
 
 	return nil
+}
+
+func applyUpdateFilter(updateBuilder sq.UpdateBuilder, updateParams repoModel.UpdateOrderParams) sq.UpdateBuilder {
+	if updateParams.UserUUID != nil {
+		updateBuilder = updateBuilder.Set(userUUIDColumn, updateParams.UserUUID)
+	}
+
+	if updateParams.TotalPrice != nil {
+		updateBuilder = updateBuilder.Set(totalPriceColumn, updateParams.TotalPrice)
+	}
+	if updateParams.TransactionUUID != nil {
+		updateBuilder = updateBuilder.Set(transactionUUIDColumn, updateParams.TransactionUUID)
+	}
+	if updateParams.PaymentMethod != nil {
+		updateBuilder = updateBuilder.Set(paymentMethodColumn, updateParams.PaymentMethod)
+	}
+	if updateParams.Status != nil {
+		updateBuilder = updateBuilder.Set(statusColumn, updateParams.Status)
+	}
+
+	return updateBuilder
 }

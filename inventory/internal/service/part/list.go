@@ -6,19 +6,17 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/model"
 )
 
-func (s *service) List(ctx context.Context, filter *model.PartsFilter) []*model.Part {
-	parts := s.repo.List(ctx)
+func (s *service) List(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
+	parts, err := s.repo.List(ctx)
+	if err != nil {
+		return []*model.Part{}, err
+	}
 	filteredParts := filterValues(filter, parts)
 
-	return filteredParts
+	return filteredParts, nil
 }
 
-func filterValues(filter *model.PartsFilter, partsSet map[model.PartUUID]*model.Part) []*model.Part {
-	parts := make([]*model.Part, 0, len(partsSet))
-	for _, part := range partsSet {
-		parts = append(parts, part)
-	}
-
+func filterValues(filter *model.PartsFilter, parts []*model.Part) []*model.Part {
 	if filter == nil {
 		return parts
 	}

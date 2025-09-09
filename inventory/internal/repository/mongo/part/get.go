@@ -4,21 +4,23 @@ import (
 	"context"
 	"fmt"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/converter"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	"go.mongodb.org/mongo-driver/bson"
 
 	model "github.com/kirillmc/starShipsCompany/inventory/internal/model"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
 )
 
-func (r *repository) Get(ctx context.Context, partUUID model.PartUUID) (*model.Part, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
+const partUUIDField = "uuid"
 
+func (r *repository) Get(ctx context.Context, partUUID model.PartUUID) (*model.Part, error) {
 	const op = "Get"
 
-	part, ok := r.parts[partUUID]
-	if !ok {
-		return &model.Part{}, fmt.Errorf("failed to execute %s method: failed to get part: %w",
-			op, serviceErrors.ErrNotFound)
+	var part *repoModel.Part
+	err := r.collection.FindOne(ctx, bson.M{partUUIDField: partUUID}).Decode(&part)
+	if err != nil {
+		return &model.Part{},
+			fmt.Errorf("%w: failed to execute %s: %s", serviceErrors.ErrInternalServer, op, err)
 	}
 
 	return converter.ToModelPart(part), nil
