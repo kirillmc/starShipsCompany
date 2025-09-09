@@ -9,7 +9,7 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
 )
 
-func (r *repository) Get(_ context.Context, partUUID model.PartUUID) (*model.Part, error) {
+func (r *repository) Get(ctx context.Context, partUUID model.PartUUID) (*model.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

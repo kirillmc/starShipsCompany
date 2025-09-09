@@ -1,32 +1,36 @@
 package part
 
 import (
-	model2 "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	"context"
+	"fmt"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/samber/lo"
 )
 
-func setDefaultPartsMap() map[model2.PartUUID]*model2.Part {
-	const defaultPartsCoount = 11
-	defaultMap := make(map[string]*model2.Part)
-	for range defaultPartsCoount {
-		UUID := gofakeit.UUID()
-		defaultMap[UUID] = &model2.Part{
-			UUID:          UUID,
+func setDefaultPartsMap(ctx context.Context, collection *mongo.Collection) error {
+	const defaultPartsCount = 11
+	defaultParts := make([]interface{}, 0, defaultPartsCount)
+
+	for range defaultPartsCount {
+		tempPart := repoModel.Part{
+			UUID:          gofakeit.UUID(),
 			Name:          gofakeit.Name(),
 			Description:   gofakeit.Slogan(),
 			Price:         gofakeit.Price(1, 101),
 			StockQuantity: gofakeit.Int64(),
-			Category:      model2.Category(gofakeit.Int32() % 4),
-			Dimensions: &model2.Dimensions{
+			Category:      repoModel.Category(gofakeit.Int32() % 4),
+			Dimensions: &repoModel.Dimensions{
 				Length: gofakeit.Float64(),
 				Width:  gofakeit.Float64(),
 				Height: gofakeit.Float64(),
 				Weight: gofakeit.Float64(),
 			},
-			Manufacturer: &model2.Manufacturer{
+			Manufacturer: &repoModel.Manufacturer{
 				Name:    gofakeit.Name(),
 				Country: gofakeit.Country(),
 				Website: gofakeit.Word(),
@@ -36,7 +40,15 @@ func setDefaultPartsMap() map[model2.PartUUID]*model2.Part {
 			CreatedAt: lo.ToPtr(time.Now()),
 			UpdatedAt: lo.ToPtr(time.Now()),
 		}
+
+		defaultParts = append(defaultParts, tempPart)
 	}
 
-	return defaultMap
+	_, err := collection.InsertMany(ctx, defaultParts)
+	if err != nil {
+		return fmt.Errorf("%w: ошибка при базовом заполнении храниллища деталей: %s",
+			serviceErrors.ErrInternalServer, err)
+	}
+
+	return nil
 }

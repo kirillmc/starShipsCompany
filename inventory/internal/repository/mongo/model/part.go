@@ -1,22 +1,24 @@
 package model
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
 type PartUUID = string
 
 type Part struct {
-	UUID          PartUUID
-	Name          string
-	Description   string
-	Price         float64
-	StockQuantity int64
-	Category      Category
-	Dimensions    *Dimensions
-	Manufacturer  *Manufacturer
-	Tags          []string
-	Metadata      map[string]interface{}
-	CreatedAt     *time.Time
-	UpdatedAt     *time.Time
+	ID            primitive.ObjectID     `bson:"_id,omitempty"`
+	UUID          PartUUID               `bson:"uuid"`
+	Name          string                 `bson:"name"`
+	Description   string                 `bson:"description"`
+	Price         float64                `bson:"price"`
+	StockQuantity int64                  `bson:"stock_quantity"`
+	Category      Category               `bson:"category"`
+	Dimensions    *Dimensions            `bson:"dimensions,omitempty"`
+	Manufacturer  *Manufacturer          `bson:"manufacturer,omitempty"`
+	Tags          []string               `bson:"tags,omitempty"`
+	Metadata      map[string]interface{} `bson:"metadata,omitempty"`
+	CreatedAt     *time.Time             `bson:"created_at,omitempty"`
+	UpdatedAt     *time.Time             `bson:"updated_at,omitempty"`
 }

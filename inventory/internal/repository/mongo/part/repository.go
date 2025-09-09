@@ -1,18 +1,28 @@
 package part
 
 import (
+	"context"
 	def "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
-	"sync"
+	"go.mongodb.org/mongo-driver/mongo"
 )
+
+const partCollectionName = "part"
 
 var _ def.Repository = (*repository)(nil)
 
 type repository struct {
-	mu    sync.RWMutex
-	parts map[string]*model.Part
+	collection *mongo.Collection
 }
 
-func NewRepository() *repository {
-	return &repository{parts: setDefaultPartsMap()}
+func NewRepository(ctx context.Context, db *mongo.Database) (*repository, error) {
+	collection := db.Collection(partCollectionName)
+
+	err := setDefaultPartsMap(ctx, collection)
+	if err != nil {
+		return &repository{}, err
+	}
+
+	return &repository{
+		collection: collection,
+	}, nil
 }

@@ -71,9 +71,9 @@ func main() {
 	}()
 	paymentClient := paymentClient.NewClient(paymentV1.NewPaymentServiceClient(connPayment))
 
-	err = godotenv.Load(".env")
+	err = godotenv.Load(".env.example")
 	if err != nil {
-		log.Printf("failed to load .env file: %v\n", err)
+		log.Printf("failed to load .env.example file: %v\n", err)
 		return
 	}
 	dbURI := os.Getenv("DB_URI")
