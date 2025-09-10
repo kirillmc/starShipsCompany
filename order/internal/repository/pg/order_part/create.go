@@ -3,6 +3,7 @@ package orderPart
 import (
 	"context"
 	"fmt"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
@@ -21,13 +22,13 @@ func (r *repository) Create(ctx context.Context, tx pgx.Tx, orderID model.OrderI
 	query, args, err := insertBuilder.ToSql()
 	if err != nil {
 		return fmt.Errorf("%w: failed to build %s query: %s",
-			serviceErrors.ErrInternalServer, op, err)
+			serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	_, err = tx.Exec(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("%w: failed to execute %s query: %s",
-			serviceErrors.ErrInternalServer, op, err)
+			serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	return nil

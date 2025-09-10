@@ -3,12 +3,12 @@ package order
 import (
 	"context"
 	"fmt"
+
 	sq "github.com/Masterminds/squirrel"
+	model "github.com/kirillmc/starShipsCompany/order/internal/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/repository/pg/converter"
 	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
-
-	model "github.com/kirillmc/starShipsCompany/order/internal/model"
 )
 
 func (r *repository) UpdateOrder(ctx context.Context, updateOrderParams model.UpdateOrderParams) error {
@@ -24,13 +24,13 @@ func (r *repository) UpdateOrder(ctx context.Context, updateOrderParams model.Up
 	query, args, err := updateBuilder.ToSql()
 	if err != nil {
 		return fmt.Errorf("%w: failed to build %s query: %s",
-			serviceErrors.ErrInternalServer, op, err)
+			serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	_, err = r.pool.Exec(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("%w: failed to execute %s query: %s",
-			serviceErrors.ErrInternalServer, op, err)
+			serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	return nil

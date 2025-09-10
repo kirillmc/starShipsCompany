@@ -31,18 +31,15 @@ func (s *ServiceSuite) TestListWithEmptyFilter() {
 			Description: gofakeit.Slogan(),
 		}
 		part3N       = part3
-		foundedParts = map[model.PartUUID]*model.Part{
-			part1.UUID: &part1,
-			part2.UUID: &part2,
-			part3.UUID: &part3,
-		}
+		foundedParts = []*model.Part{&part1, &part2, &part3}
 
 		expectedParts = []*model.Part{&part1N, &part2N, &part3N}
 	)
 
-	s.repository.On("List", ctx).Return(foundedParts).Once()
+	s.repository.On("List", ctx).Return(foundedParts, nil).Once()
 
-	filteredParts := s.service.List(ctx, filter)
+	filteredParts, err := s.service.List(ctx, filter)
+	s.Assert().NoError(err)
 	s.Assert().NotNil(filteredParts)
 	s.Assert().ElementsMatch(expectedParts, filteredParts)
 }
@@ -71,18 +68,15 @@ func (s *ServiceSuite) TestListWithUUIDFilter() {
 
 		filter = &model.PartsFilter{UUIDs: []model.PartUUID{part1.UUID, part3.UUID}}
 
-		foundedParts = map[model.PartUUID]*model.Part{
-			part1.UUID: &part1,
-			part2.UUID: &part2,
-			part3.UUID: &part3,
-		}
+		foundedParts = []*model.Part{&part1, &part2, &part3}
 
 		expectedParts = []*model.Part{&part1N, &part3N}
 	)
 
-	s.repository.On("List", ctx).Return(foundedParts).Once()
+	s.repository.On("List", ctx).Return(foundedParts, nil).Once()
 
-	filteredParts := s.service.List(ctx, filter)
+	filteredParts, err := s.service.List(ctx, filter)
+	s.Assert().NoError(err)
 	s.Assert().NotNil(filteredParts)
 	s.Assert().ElementsMatch(expectedParts, filteredParts)
 }
@@ -113,18 +107,15 @@ func (s *ServiceSuite) TestListWithUUIDAndNameFilter() {
 			Names: []string{part1.Name},
 		}
 
-		foundedParts = map[model.PartUUID]*model.Part{
-			part1.UUID: &part1,
-			part2.UUID: &part2,
-			part3.UUID: &part3,
-		}
+		foundedParts = []*model.Part{&part1, &part2, &part3}
 
 		expectedParts = []*model.Part{&part1N}
 	)
 
-	s.repository.On("List", ctx).Return(foundedParts).Once()
+	s.repository.On("List", ctx).Return(foundedParts, nil).Once()
 
-	filteredParts := s.service.List(ctx, filter)
+	filteredParts, err := s.service.List(ctx, filter)
+	s.Assert().NoError(err)
 	s.Assert().NotNil(filteredParts)
 	s.Assert().ElementsMatch(expectedParts, filteredParts)
 }

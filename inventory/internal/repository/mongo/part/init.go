@@ -3,13 +3,13 @@ package part
 import (
 	"context"
 	"fmt"
-	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
-	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
 	"github.com/samber/lo"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func setDefaultPartsMap(ctx context.Context, collection *mongo.Collection) error {
@@ -47,7 +47,7 @@ func setDefaultPartsMap(ctx context.Context, collection *mongo.Collection) error
 	_, err := collection.InsertMany(ctx, defaultParts)
 	if err != nil {
 		return fmt.Errorf("%w: ошибка при базовом заполнении храниллища деталей: %s",
-			serviceErrors.ErrInternalServer, err)
+			serviceErrors.ErrInternalServer, err.Error())
 	}
 
 	return nil

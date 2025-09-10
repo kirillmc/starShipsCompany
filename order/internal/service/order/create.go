@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/jackc/pgx/v5"
+	"log"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 )
@@ -44,17 +45,19 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
 		return model.OrderInfo{}, fmt.Errorf("%w: ошибка начала транзакции: %s",
-			serviceErrors.ErrInternalServer, err)
+			serviceErrors.ErrInternalServer, err.Error())
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			tx.Rollback(ctx)
+			err = tx.Rollback(ctx)
 			panic(p)
 		} else if err != nil {
-			tx.Rollback(ctx)
+			err = tx.Rollback(ctx)
 		} else {
 			err = tx.Commit(ctx)
 		}
+
+		log.Printf("ошибка отката транзакции: %s", err.Error())
 	}()
 
 	createOrderInfo := model.CreateOrder{

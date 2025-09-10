@@ -3,19 +3,19 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
-	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/part"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	inventoryV1API "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
+	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/part"
 	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -69,7 +69,8 @@ func main() {
 	mongoInventoryDB := client.Database(mongoNameDB)
 	repo, err := partRepo.NewRepository(ctx, mongoInventoryDB)
 	if err != nil {
-		log.Fatalf("failed to init repo: %s", err)
+		log.Printf("failed to init repo: %s", err)
+		return
 	}
 
 	service := partService.NewService(repo)

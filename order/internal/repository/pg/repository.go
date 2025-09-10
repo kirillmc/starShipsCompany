@@ -2,8 +2,8 @@ package pg
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5"
 
+	"github.com/jackc/pgx/v5"
 	model "github.com/kirillmc/starShipsCompany/order/internal/model"
 )
 

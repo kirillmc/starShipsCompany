@@ -3,12 +3,12 @@ package part
 import (
 	"context"
 	"fmt"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/converter"
-	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
-	"go.mongodb.org/mongo-driver/bson"
 
 	model "github.com/kirillmc/starShipsCompany/inventory/internal/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/converter"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const partUUIDField = "uuid"
@@ -20,7 +20,7 @@ func (r *repository) Get(ctx context.Context, partUUID model.PartUUID) (*model.P
 	err := r.collection.FindOne(ctx, bson.M{partUUIDField: partUUID}).Decode(&part)
 	if err != nil {
 		return &model.Part{},
-			fmt.Errorf("%w: failed to execute %s: %s", serviceErrors.ErrInternalServer, op, err)
+			fmt.Errorf("%w: failed to execute %s: %s", serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	return converter.ToModelPart(part), nil

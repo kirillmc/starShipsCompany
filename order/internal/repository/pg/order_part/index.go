@@ -3,6 +3,7 @@ package orderPart
 import (
 	"context"
 	"fmt"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/model"
@@ -20,14 +21,14 @@ func (r *repository) Index(ctx context.Context, orderID model.OrderID) ([]model.
 	query, args, err := selectBuilder.ToSql()
 	if err != nil {
 		return []model.PartUUID{}, fmt.Errorf("%w: failed to build %s query: %s",
-			serviceErrors.ErrInternalServer, op, err)
+			serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	var partUUIDs []repoModel.PartUUID
 	rows, err := r.pool.Query(ctx, query, args...)
 	if err != nil {
 		return []model.PartUUID{}, fmt.Errorf("%w: failed to execute %s query: %s",
-			serviceErrors.ErrInternalServer, op, err)
+			serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	for rows.Next() {
@@ -35,7 +36,7 @@ func (r *repository) Index(ctx context.Context, orderID model.OrderID) ([]model.
 		err = rows.Scan(&partUUID)
 		if err != nil {
 			return []model.PartUUID{}, fmt.Errorf("%w: failed during scanning values after %s query: %s",
-				serviceErrors.ErrInternalServer, op, err)
+				serviceErrors.ErrInternalServer, op, err.Error())
 		}
 
 		partUUIDs = append(partUUIDs, partUUID)

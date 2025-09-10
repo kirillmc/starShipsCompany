@@ -84,23 +84,33 @@ func (_c *Repository_Get_Call) RunAndReturn(run func(context.Context, model.Part
 }
 
 // List provides a mock function with given fields: ctx
-func (_m *Repository) List(ctx context.Context) map[model.PartUUID]*model.Part {
+func (_m *Repository) List(ctx context.Context) ([]*model.Part, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 map[model.PartUUID]*model.Part
-	if rf, ok := ret.Get(0).(func(context.Context) map[model.PartUUID]*model.Part); ok {
+	var r0 []*model.Part
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) ([]*model.Part, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) []*model.Part); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[model.PartUUID]*model.Part)
+			r0 = ret.Get(0).([]*model.Part)
 		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Repository_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
@@ -121,12 +131,12 @@ func (_c *Repository_List_Call) Run(run func(ctx context.Context)) *Repository_L
 	return _c
 }
 
-func (_c *Repository_List_Call) Return(_a0 map[model.PartUUID]*model.Part) *Repository_List_Call {
-	_c.Call.Return(_a0)
+func (_c *Repository_List_Call) Return(_a0 []*model.Part, _a1 error) *Repository_List_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *Repository_List_Call) RunAndReturn(run func(context.Context) map[model.PartUUID]*model.Part) *Repository_List_Call {
+func (_c *Repository_List_Call) RunAndReturn(run func(context.Context) ([]*model.Part, error)) *Repository_List_Call {
 	_c.Call.Return(run)
 	return _c
 }

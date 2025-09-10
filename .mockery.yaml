@@ -11,7 +11,7 @@ packages:
   github.com/kirillmc/starShipsCompany/order/internal/service:
     config:
       include-regex: ".*Service"
-  github.com/kirillmc/starShipsCompany/order/internal/repository:
+  github.com/kirillmc/starShipsCompany/order/internal/repository/pg:
     config:
       include-regex: ".*Repository"
   github.com/kirillmc/starShipsCompany/order/internal/client/grpc:
@@ -21,7 +21,7 @@ packages:
   github.com/kirillmc/starShipsCompany/inventory/internal/service:
     config:
       include-regex: ".*Service"
-  github.com/kirillmc/starShipsCompany/inventory/internal/repository:
+  github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo:
     config:
       include-regex: ".*Repository"
 

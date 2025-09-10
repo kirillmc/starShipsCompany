@@ -1,9 +1,9 @@
 package part
 
 import (
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/mocks"
 	"testing"
 
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/mocks"
 	"github.com/stretchr/testify/suite"
 )
 
