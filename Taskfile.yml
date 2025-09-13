@@ -586,13 +586,14 @@ tasks:
     summary: |
       Запускает юнит-тесты для указанных модулей проекта.
       Можно указать конкретные модули через переменную MODULES.
+      Исключены интеграционные тесты (integration)
     cmds:
       - |
         ERR=0
         for mod in {{.MODULES}}; do
           if [ -d "$mod" ]; then
-            echo "🧪 Тестируем модуль $mod"
-            go test -v ./$mod/... || ERR=1
+            echo "🧪 Тестируем модуль $mod (только юнит тесты)"
+            go test -v -tags="!integration: $(go list ./$mod/... | grep -v -E '(/integration|/tests/integration|/integrationtests)') || ERR=1
           fi
         done
         exit $ERR

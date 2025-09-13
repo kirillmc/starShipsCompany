@@ -3,6 +3,7 @@ module github.com/kirillmc/starShipsCompany/payment
 go 1.24.5
 
 replace github.com/kirillmc/starShipsCompany/shared => ../shared
+replace github.com/kirillmc/starShipsCompany/platform => ../platform
 
 require (
 	github.com/brianvoe/gofakeit/v7 v7.5.1
@@ -13,6 +14,7 @@ require (
 )
 
 require (
+	github.com/caarlos0/env/v11 v11.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
