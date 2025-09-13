@@ -2,7 +2,7 @@ package converter
 
 import (
 	model "github.com/kirillmc/starShipsCompany/inventory/internal/model"
-	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/model"
 )
 
 func ToModelCategory(category repoModel.Category) model.Category {

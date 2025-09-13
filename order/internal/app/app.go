@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/kirillmc/starShipsCompany/payment/internal/config"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/config"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/grpc/health"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
+	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
@@ -70,7 +70,7 @@ func (a *App) initCloser(_ context.Context) error {
 }
 
 func (a *App) initListener(_ context.Context) error {
-	lis, err := net.Listen("tcp", config.AppConfig().PaymentGRPC.Address())
+	lis, err := net.Listen("tcp", config.AppConfig().InventoryGRPC.Address())
 	if err != nil {
 		return err
 	}
@@ -99,13 +99,14 @@ func (a *App) initGPRCServer(ctx context.Context) error {
 	reflection.Register(a.grpcServer)
 	health.RegisterService(a.grpcServer)
 
-	paymentV1.RegisterPaymentServiceServer(a.grpcServer, a.diContainer.PaymentV1API(ctx))
+	inventoryV1.RegisterInventoryServiceServer(a.grpcServer, a.diContainer.InventoryV1API(ctx))
 
 	return nil
 }
 
 func (a *App) runGRPCServer(ctx context.Context) error {
-	logger.Info(ctx, fmt.Sprintf("🚀 gRPC InventoryService server listening on %s", config.AppConfig().PaymentGRPC.Address()))
+	logger.Info(ctx, fmt.Sprintf("🚀 gRPC InventoryService server listening on %s",
+		config.AppConfig().InventoryGRPC.Address()))
 
 	err := a.grpcServer.Serve(a.listener)
 	if err != nil {

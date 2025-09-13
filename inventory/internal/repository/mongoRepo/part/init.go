@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
-	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/model"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/mongo"

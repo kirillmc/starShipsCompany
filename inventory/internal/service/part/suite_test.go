@@ -3,7 +3,7 @@ package part
 import (
 	"testing"
 
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/mocks"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/mocks"
 	"github.com/stretchr/testify/suite"
 )
 

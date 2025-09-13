@@ -12,11 +12,11 @@ import (
 func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
-		return nil, errors.Errorf("failed to connect to mongo: %v", err)
+		return nil, errors.Errorf("failed to connect to mongoRepo: %v", err)
 	}
 
 	if err = client.Ping(ctx, readpref.Primary()); err != nil {
-		return nil, errors.Errorf("failed to ping mongo: %v", err)
+		return nil, errors.Errorf("failed to ping mongoRepo: %v", err)
 	}
 
 	return client, nil

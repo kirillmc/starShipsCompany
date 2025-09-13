@@ -2,7 +2,7 @@ package converter
 
 import (
 	serviceModel "github.com/kirillmc/starShipsCompany/inventory/internal/model"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/model"
 )
 
 func ToModelManufacturer(manufacturer *model.Manufacturer) *serviceModel.Manufacturer {

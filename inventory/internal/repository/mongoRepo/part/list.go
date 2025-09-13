@@ -6,8 +6,8 @@ import (
 	"log"
 
 	model "github.com/kirillmc/starShipsCompany/inventory/internal/model"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/converter"
-	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/model"
+	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/converter"
+	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/model"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
 	"go.mongodb.org/mongo-driver/bson"
 )

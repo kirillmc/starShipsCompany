@@ -3,7 +3,7 @@ package part
 import (
 	"context"
 
-	def "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo"
+	def "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

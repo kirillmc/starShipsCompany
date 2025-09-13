@@ -31,8 +31,8 @@ type Config struct {
 func buildConfig(opts ...Option) *Config {
 	cfg := &Config{
 		NetworkName:   "test-network",
-		ContainerName: "mongo-container",
-		ImageName:     "mongo:8.0",
+		ContainerName: "mongoRepo-container",
+		ImageName:     "mongoRepo:8.0",
 		Database:      "test",
 		Username:      "root",
 		Password:      "root",
