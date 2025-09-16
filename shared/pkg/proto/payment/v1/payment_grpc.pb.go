@@ -21,14 +21,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentService_PayOrder_FullMethodName = "/payment.v1.InventoryService/PayOrder"
+	PaymentService_PayOrder_FullMethodName = "/payment.v1.PaymentService/PayOrder"
 )
 
-// PaymentServiceClient is the client API for InventoryService service.
+// PaymentServiceClient is the client API for PaymentService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// InventoryService - cервис оплаты заказов, который симулирует работу платёжного шлюза
+// PaymentService - cервис оплаты заказов, который симулирует работу платёжного шлюза
 type PaymentServiceClient interface {
 	// PayOrder oбрабатывает команду на оплату и возвращает transaction_uuid
 	PayOrder(ctx context.Context, in *PayOrderRequest, opts ...grpc.CallOption) (*PayOrderResponse, error)
@@ -52,11 +52,11 @@ func (c *paymentServiceClient) PayOrder(ctx context.Context, in *PayOrderRequest
 	return out, nil
 }
 
-// PaymentServiceServer is the server API for InventoryService service.
+// PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility.
 //
-// InventoryService - cервис оплаты заказов, который симулирует работу платёжного шлюза
+// PaymentService - cервис оплаты заказов, который симулирует работу платёжного шлюза
 type PaymentServiceServer interface {
 	// PayOrder oбрабатывает команду на оплату и возвращает transaction_uuid
 	PayOrder(context.Context, *PayOrderRequest) (*PayOrderResponse, error)
@@ -112,11 +112,11 @@ func _PaymentService_PayOrder_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-// PaymentService_ServiceDesc is the grpc.ServiceDesc for InventoryService service.
+// PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PaymentService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "payment.v1.InventoryService",
+	ServiceName: "payment.v1.PaymentService",
 	HandlerType: (*PaymentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

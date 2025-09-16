@@ -2,14 +2,15 @@ package env
 
 import (
 	"net"
+	"time"
 
 	"github.com/caarlos0/env/v11"
 )
 
 type orderHTTPEnvConfig struct {
-	Host        string `env:"HTTP_HOST,required"`
-	Port        string `env:"HTTP_PORT,required"`
-	ReadTimeOut string `env:"HTTP_READ_TIMEOUT,required"`
+	Host        string        `env:"HTTP_HOST,required"`
+	Port        string        `env:"HTTP_PORT,required"`
+	ReadTimeOut time.Duration `env:"HTTP_READ_TIMEOUT,required"`
 }
 
 type orderHTTPConfig struct {
@@ -27,4 +28,8 @@ func NewOrderHTTPConfig() (*orderHTTPConfig, error) {
 
 func (cfg *orderHTTPConfig) Address() string {
 	return net.JoinHostPort(cfg.raw.Host, cfg.raw.Port)
+}
+
+func (cfg *orderHTTPConfig) ReadTimeOut() time.Duration {
+	return cfg.raw.ReadTimeOut
 }

@@ -8,8 +8,10 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 	repoModel "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/model"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 )
 
 func setDefaultPartsMap(ctx context.Context, collection *mongo.Collection) error {
@@ -46,7 +48,8 @@ func setDefaultPartsMap(ctx context.Context, collection *mongo.Collection) error
 
 	_, err := collection.InsertMany(ctx, defaultParts)
 	if err != nil {
-		return fmt.Errorf("%w: ошибка при базовом заполнении храниллища деталей: %s",
+		logger.Error(ctx, "error during basic filling of the parts storage", zap.Error(err))
+		return fmt.Errorf("%w: ошибка при базовом заполнении хранилища деталей: %s",
 			serviceErrors.ErrInternalServer, err.Error())
 	}
 

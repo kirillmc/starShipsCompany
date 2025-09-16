@@ -1,10 +1,10 @@
 package config
 
 import (
-	"github.com/kirillmc/starShipsCompany/order/internal/config/env"
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/kirillmc/starShipsCompany/order/internal/config/env"
 )
 
 type config struct {
@@ -41,7 +41,7 @@ func Load(path ...string) error {
 		return err
 	}
 
-	mongoCfg, err := env.NewMongoConfig()
+	postgresCfg, err := env.NewPostgresConfig()
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func Load(path ...string) error {
 	appConfig = &config{
 		Logger:    loggerCfg,
 		OrderHTTP: orderHTTPCfg,
-		Postgres:  mongoCfg,
+		Postgres:  postgresCfg,
 		ExtDep:    extDepCfg,
 	}
 

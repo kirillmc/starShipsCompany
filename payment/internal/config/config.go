@@ -1,10 +1,10 @@
 package config
 
 import (
-	"github.com/kirillmc/starShipsCompany/payment/internal/config/env"
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/kirillmc/starShipsCompany/payment/internal/config/env"
 )
 
 type config struct {

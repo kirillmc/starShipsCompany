@@ -4,9 +4,8 @@ import (
 	"context"
 
 	"github.com/docker/docker/api/types/container"
-	"go.uber.org/zap"
-
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 )
 
 type Logger interface {

@@ -9,6 +9,8 @@ import (
 	"github.com/kirillmc/starShipsCompany/order/internal/repository/pg/converter"
 	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 )
 
 func (r *repository) UpdateOrder(ctx context.Context, updateOrderParams model.UpdateOrderParams) error {
@@ -23,12 +25,14 @@ func (r *repository) UpdateOrder(ctx context.Context, updateOrderParams model.Up
 
 	query, args, err := updateBuilder.ToSql()
 	if err != nil {
+		logger.Error(ctx, fmt.Sprintf("failed to build %s query", op), zap.Error(err))
 		return fmt.Errorf("%w: failed to build %s query: %s",
 			serviceErrors.ErrInternalServer, op, err.Error())
 	}
 
 	_, err = r.pool.Exec(ctx, query, args...)
 	if err != nil {
+		logger.Error(ctx, fmt.Sprintf("failed to execute %s query", op), zap.Error(err))
 		return fmt.Errorf("%w: failed to execute %s query: %s",
 			serviceErrors.ErrInternalServer, op, err.Error())
 	}

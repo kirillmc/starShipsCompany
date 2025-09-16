@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/kirillmc/starShipsCompany/payment/internal/app"
 	"github.com/kirillmc/starShipsCompany/payment/internal/config"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"go.uber.org/zap"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 const (

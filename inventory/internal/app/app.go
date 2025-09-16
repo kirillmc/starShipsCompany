@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+
 	"github.com/kirillmc/starShipsCompany/inventory/internal/config"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/grpc/health"
@@ -12,7 +14,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
-	"net"
 )
 
 type App struct {

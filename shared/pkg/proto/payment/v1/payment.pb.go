@@ -237,8 +237,8 @@ var file_payment_v1_payment_proto_goTypes = []any{
 }
 var file_payment_v1_payment_proto_depIdxs = []int32{
 	0, // 0: payment.v1.PayOrderRequest.payment_method:type_name -> payment.v1.PAYMENTMETHOD
-	1, // 1: payment.v1.InventoryService.PayOrder:input_type -> payment.v1.PayOrderRequest
-	2, // 2: payment.v1.InventoryService.PayOrder:output_type -> payment.v1.PayOrderResponse
+	1, // 1: payment.v1.PaymentService.PayOrder:input_type -> payment.v1.PayOrderRequest
+	2, // 2: payment.v1.PaymentService.PayOrder:output_type -> payment.v1.PayOrderResponse
 	2, // [2:3] is the sub-list for method output_type
 	1, // [1:2] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

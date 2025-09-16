@@ -206,6 +206,7 @@ tasks:
       - task: proto:gen
       - task: ogen:gen
       - task: mockery:gen
+      - task: env:generate
 
   up-core:
     desc: Поднять core контейнеры
@@ -510,6 +511,7 @@ tasks:
 
   test-coverage:
     desc: "Тесты с покрытием бизнес-логики (service/api), отчёт по каждому модулю + общий"
+    deps: [ mockery:gen ]
     cmds:
       - |
         echo "🧪 Запускаем расчёт покрытия..."
@@ -659,3 +661,9 @@ tasks:
           fi
         done
         exit $ERR
+
+  before-deploy:
+    desc: "Минимум необходимых проверок при деплое"
+    deps: [ gen, deps:update, format, lint, coverage:html ]
+
+

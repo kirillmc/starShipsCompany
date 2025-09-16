@@ -3,87 +3,133 @@ package app
 import (
 	"context"
 	"fmt"
-	v1 "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/config"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo"
-	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongoRepo/part"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/service"
-	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
+	orderAPI "github.com/kirillmc/starShipsCompany/order/internal/api/order/v1"
+	grpcClients "github.com/kirillmc/starShipsCompany/order/internal/client/grpc"
+	inventoryClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/inventory/v1"
+	paymentClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/payment/v1"
+	"github.com/kirillmc/starShipsCompany/order/internal/config"
+	"github.com/kirillmc/starShipsCompany/order/internal/migrator"
+	repo "github.com/kirillmc/starShipsCompany/order/internal/repository/pg"
+	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/order"
+	"github.com/kirillmc/starShipsCompany/order/internal/service"
+	orderService "github.com/kirillmc/starShipsCompany/order/internal/service/order"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
+	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type diContainer struct {
-	inventoryV1API inventoryV1.InventoryServiceServer
+	orderV1Handler orderV1.Handler
 
-	inventoryService    service.Service
-	inventoryRepository mongoRepo.Repository
+	orderService service.Service
+	orderRepo    repo.OrderRepository
+	pgxPool      *pgxpool.Pool
 
-	mongoDBClient *mongo.Client
-	mongoDBHandle *mongo.Database
+	inventoryClient grpcClients.InventoryClient
+	paymentClient   grpcClients.PaymentClient
 }
 
 func NewDIContainer() *diContainer {
 	return &diContainer{}
 }
 
-func (d *diContainer) InventoryV1API(ctx context.Context) inventoryV1.InventoryServiceServer {
-	if d.inventoryV1API == nil {
-		d.inventoryV1API = v1.NewAPI(d.InventoryService(ctx))
+func (d *diContainer) OrderV1Handler(ctx context.Context) orderV1.Handler {
+	if d.orderV1Handler == nil {
+		d.orderV1Handler = orderAPI.NewAPI(d.OrrderService(ctx))
 	}
 
-	return d.inventoryV1API
+	return d.orderV1Handler
 }
 
-func (d *diContainer) InventoryService(ctx context.Context) service.Service {
-	if d.inventoryService == nil {
-		d.inventoryService = partService.NewService(d.InventoryRepository(ctx))
+func (d *diContainer) OrrderService(ctx context.Context) service.Service {
+	if d.orderService == nil {
+		d.orderService = orderService.NewService(
+			d.PgxPool(ctx),
+			d.InventoryClient(),
+			d.PaymentClient(),
+			d.OrderRepository(ctx),
+		)
 	}
 
-	return d.inventoryService
+	return d.orderService
 }
 
-func (d *diContainer) InventoryRepository(ctx context.Context) mongoRepo.Repository {
-	if d.inventoryRepository == nil {
+func (d *diContainer) OrderRepository(ctx context.Context) repo.OrderRepository {
+	if d.orderRepo == nil {
+		d.orderRepo = orderRepository.NewRepository(d.PgxPool(ctx))
+	}
+
+	return d.orderRepo
+}
+
+func (d *diContainer) PgxPool(ctx context.Context) *pgxpool.Pool {
+	if d.pgxPool == nil {
 		var err error
-		d.inventoryRepository, err = partRepo.NewRepository(ctx, d.MongoDBHandle(ctx))
+		d.pgxPool, err = pgxpool.New(ctx, config.AppConfig().Postgres.URI())
 		if err != nil {
-			panic(fmt.Sprintf("failed to create new repository: %s\n", err.Error()))
-		}
-	}
-
-	return d.inventoryRepository
-}
-
-func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
-	if d.mongoDBClient == nil {
-		client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.AppConfig().Mongo.URI()))
-		if err != nil {
-			panic(fmt.Sprintf("failed to connect to MongoDB: %s\n", err.Error()))
+			panic(fmt.Sprintf("failed to connect to database: %s\n", err))
 		}
 
-		err = client.Ping(ctx, readpref.Primary())
-		if err != nil {
-			panic(fmt.Sprintf("failed to ping MongoDB: %v\n", err))
-		}
-
-		closer.AddNamed("MongoDB client", func(ctx context.Context) error {
-			return client.Disconnect(ctx)
+		closer.AddNamed("Pgx pool", func(ctx context.Context) error {
+			d.pgxPool.Close()
+			return nil
 		})
 
-		d.mongoDBClient = client
+		err = d.pgxPool.Ping(ctx)
+		if err != nil {
+			panic(fmt.Sprintf("db is not available: %s\n", err))
+		}
+
+		migratorRunner := migrator.NewMigrator(stdlib.OpenDB(*d.pgxPool.Config().Copy().ConnConfig),
+			config.AppConfig().Postgres.MigrationsDir())
+
+		err = migratorRunner.Up()
+		if err != nil {
+			panic(fmt.Sprintf("failed to migrate db: %s\n", err))
+		}
 	}
 
-	return d.mongoDBClient
+	return d.pgxPool
 }
 
-func (d *diContainer) MongoDBHandle(ctx context.Context) *mongo.Database {
-	if d.mongoDBHandle == nil {
-		d.mongoDBHandle = d.MongoDBClient(ctx).Database(config.AppConfig().Mongo.DatabaseName())
+func (d *diContainer) InventoryClient() grpcClients.InventoryClient {
+	if d.inventoryClient == nil {
+		connInventory, err := grpc.NewClient(
+			config.AppConfig().ExtDep.InventoryAddress(),
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		)
+		if err != nil {
+			panic(fmt.Sprintf("failed to connect to inventory service: %s\n", err))
+		}
+
+		closer.AddNamed("Inventory client", func(ctx context.Context) error { return connInventory.Close() })
+
+		d.inventoryClient = inventoryClient.NewClient(inventoryV1.NewInventoryServiceClient(connInventory))
 	}
 
-	return d.mongoDBHandle
+	return d.inventoryClient
+}
+
+func (d *diContainer) PaymentClient() grpcClients.PaymentClient {
+	if d.paymentClient == nil {
+		connPayment, err := grpc.NewClient(
+			config.AppConfig().ExtDep.PaymentAddress(),
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		)
+		if err != nil {
+			panic(fmt.Sprintf("failed to connect to payment service: %s\n", err))
+		}
+
+		closer.AddNamed("Payment client", func(ctx context.Context) error { return connPayment.Close() })
+
+		d.paymentClient = paymentClient.NewClient(paymentV1.NewPaymentServiceClient(connPayment))
+	}
+
+	return d.paymentClient
 }

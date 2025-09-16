@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 )
 
 func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
@@ -21,6 +22,7 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 	}
 
 	if len(parts) < len(partsUUIDs) {
+		logger.Error(ctx, "not enough parts to create", zap.Error(err))
 		return model.OrderInfo{}, fmt.Errorf("not enough parts: %w", serviceErrors.ErrInternalServer)
 	}
 
@@ -38,21 +40,25 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 		return model.OrderInfo{}, err
 	}
 	if err == nil {
+		logger.Error(ctx, fmt.Sprintf("order with UUID %s already exists", orderUUID), zap.Error(err))
 		return model.OrderInfo{},
 			fmt.Errorf("order with UUID %s already exists: %w", orderUUID, serviceErrors.ErrOnConflict)
 	}
 
 	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		return model.OrderInfo{}, fmt.Errorf("%w: ошибка начала транзакции: %s",
+		logger.Error(ctx, "failed to start tx", zap.Error(err))
+		return model.OrderInfo{}, fmt.Errorf("%w: failed to start tx: %s",
 			serviceErrors.ErrInternalServer, err.Error())
 	}
 	defer func() {
 		if p := recover(); p != nil {
 			err = tx.Rollback(ctx)
+			logger.Fatal(ctx, "panic recovered")
 			panic(p)
 		} else if err != nil {
 			err = tx.Rollback(ctx)
+			logger.Fatal(ctx, "rollback tx")
 		} else {
 			err = tx.Commit(ctx)
 			if err == nil {
@@ -60,7 +66,7 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 			}
 		}
 
-		log.Printf("ошибка отката транзакции: %s", err.Error())
+		logger.Error(ctx, "failed to rollback tx", zap.Error(err))
 	}()
 
 	createOrderInfo := model.CreateOrder{

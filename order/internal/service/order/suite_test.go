@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	clienMocks "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/mocks"
 	repoMock "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/mocks"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -25,6 +26,9 @@ func (s *ServiceSuite) SetupTest() {
 	s.paymentClient = clienMocks.NewPaymentClient(s.T())
 	s.orderRepository = repoMock.NewOrderRepository(s.T())
 	s.orderPartRepository = repoMock.NewOrderPartRepository(s.T())
+
+	err := logger.Init("", true)
+	s.Require().NoError(err)
 
 	pool := &pgxpool.Pool{}
 	s.service = NewService(

@@ -20,7 +20,7 @@ type postgresConfig struct {
 	raw postgresEnvConfig
 }
 
-func NewMongoConfig() (*postgresConfig, error) {
+func NewPostgresConfig() (*postgresConfig, error) {
 	var raw postgresEnvConfig
 	err := env.Parse(&raw)
 	if err != nil {
@@ -43,4 +43,8 @@ func (cfg *postgresConfig) URI() string {
 
 func (cfg *postgresConfig) DatabaseName() string {
 	return cfg.raw.Database
+}
+
+func (cfg *postgresConfig) MigrationsDir() string {
+	return cfg.raw.MigrationsDir
 }

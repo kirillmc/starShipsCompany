@@ -4,21 +4,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/kirillmc/starShipsCompany/inventory/internal/config"
+	"net/http"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/kirillmc/starShipsCompany/order/internal/config"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/grpc/health"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
-	"net"
+	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
+	"go.uber.org/zap"
 )
 
 type App struct {
 	diContainer *diContainer
-	grpcServer  *grpc.Server
-	listener    net.Listener
+	httpServer  *http.Server
 }
 
 func New(ctx context.Context) (*App, error) {
@@ -33,7 +33,7 @@ func New(ctx context.Context) (*App, error) {
 }
 
 func (a *App) Run(ctx context.Context) error {
-	return a.runGRPCServer(ctx)
+	return a.runHTTPServer(ctx)
 }
 
 func (a *App) initDeps(ctx context.Context) error {
@@ -41,8 +41,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initDI,
 		a.initLogger,
 		a.initCloser,
-		a.initListener,
-		a.initGPRCServer,
+		a.initHTTPServer,
 	}
 
 	for _, f := range inits {
@@ -69,49 +68,44 @@ func (a *App) initCloser(_ context.Context) error {
 	return nil
 }
 
-func (a *App) initListener(_ context.Context) error {
-	lis, err := net.Listen("tcp", config.AppConfig().InventoryGRPC.Address())
+func (a *App) initHTTPServer(ctx context.Context) error {
+	orderServer, err := orderV1.NewServer(a.diContainer.OrderV1Handler(ctx))
 	if err != nil {
+		logger.Error(ctx, "failed to create OpenAPI server", zap.Error(err))
 		return err
 	}
 
-	closer.AddNamed("TCP Listener", func(ctx context.Context) error {
-		lerr := lis.Close()
-		if lerr != nil && !errors.Is(err, net.ErrClosed) {
-			return lerr
-		}
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.Timeout(10 * time.Second))
 
-		return nil
-	})
+	r.Mount("/", orderServer)
 
-	a.listener = lis
+	a.httpServer = &http.Server{
+		Addr:              config.AppConfig().OrderHTTP.Address(),
+		Handler:           r,
+		ReadHeaderTimeout: config.AppConfig().OrderHTTP.ReadTimeOut(),
+	}
 
 	return nil
 }
 
-func (a *App) initGPRCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
-	closer.AddNamed("gRPC Server", func(ctx context.Context) error {
-		a.grpcServer.GracefulStop()
-		return nil
-	})
+func (a *App) runHTTPServer(ctx context.Context) error {
+	logger.Info(ctx, fmt.Sprintf("🚀 HTTP-сервер запущен по адресу %s",
+		config.AppConfig().OrderHTTP.Address()))
 
-	reflection.Register(a.grpcServer)
-	health.RegisterService(a.grpcServer)
-
-	inventoryV1.RegisterInventoryServiceServer(a.grpcServer, a.diContainer.InventoryV1API(ctx))
-
-	return nil
-}
-
-func (a *App) runGRPCServer(ctx context.Context) error {
-	logger.Info(ctx, fmt.Sprintf("🚀 gRPC InventoryService server listening on %s",
-		config.AppConfig().InventoryGRPC.Address()))
-
-	err := a.grpcServer.Serve(a.listener)
-	if err != nil {
+	err := a.httpServer.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		logger.Error(ctx, "❌ Ошибка запуска сервера", zap.Error(err))
 		return err
 	}
+
+	closer.AddNamed("HTTP Server", func(ctx context.Context) error {
+		err = a.httpServer.Shutdown(ctx)
+		logger.Error(ctx, "❌ Ошибка при остановке сервера", zap.Error(err))
+		return nil
+	})
 
 	return nil
 }
