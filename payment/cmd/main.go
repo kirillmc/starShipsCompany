@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -9,7 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/google/uuid"
+	paymentV1API "github.com/kirillmc/starShipsCompany/payment/internal/api/payment/v1"
+	paymentService "github.com/kirillmc/starShipsCompany/payment/internal/service/payment"
 	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -26,9 +26,10 @@ func main() {
 
 	s := grpc.NewServer()
 	reflection.Register(s)
-	service := &paymentService{}
+	service := paymentService.NewService()
+	api := paymentV1API.NewAPI(service)
 
-	paymentV1.RegisterPaymentServiceServer(s, service)
+	paymentV1.RegisterPaymentServiceServer(s, api)
 
 	go func() {
 		log.Printf("Starting gRPC server at port %d", grpcPort)
@@ -46,17 +47,4 @@ func main() {
 	log.Println("🛑 Shutting down gRPC server...")
 	s.GracefulStop()
 	log.Println("✅ Server stopped")
-}
-
-type paymentService struct {
-	paymentV1.UnimplementedPaymentServiceServer
-}
-
-func (s *paymentService) PayOrder(context.Context, *paymentV1.PayOrderRequest) (*paymentV1.PayOrderResponse, error) {
-	transactionUUID := uuid.NewString()
-	log.Printf("Оплата прошла успешно, transaction_uuid: %s", transactionUUID)
-
-	return &paymentV1.PayOrderResponse{
-		TransactionUuid: transactionUUID,
-	}, nil
 }

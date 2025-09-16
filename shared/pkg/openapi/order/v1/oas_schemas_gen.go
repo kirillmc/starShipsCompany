@@ -46,6 +46,8 @@ func (s *ConflictError) SetMessage(val string) {
 }
 
 func (*ConflictError) cancelOrderRes() {}
+func (*ConflictError) createOrderRes() {}
+func (*ConflictError) payOrderRes()    {}
 
 // Ref: #
 type CreateOrderRequest struct {
@@ -545,7 +547,7 @@ func (o OptString) Or(d string) string {
 type OrderStatus string
 
 const (
-	OrderStatusUNKNOWN        OrderStatus = "UNKNOWN"
+	OrderStatusUNSPECIFIED    OrderStatus = "UNSPECIFIED"
 	OrderStatusPENDINGPAYMENT OrderStatus = "PENDING_PAYMENT"
 	OrderStatusPAID           OrderStatus = "PAID"
 	OrderStatusCANCELLED      OrderStatus = "CANCELLED"
@@ -554,7 +556,7 @@ const (
 // AllValues returns all OrderStatus values.
 func (OrderStatus) AllValues() []OrderStatus {
 	return []OrderStatus{
-		OrderStatusUNKNOWN,
+		OrderStatusUNSPECIFIED,
 		OrderStatusPENDINGPAYMENT,
 		OrderStatusPAID,
 		OrderStatusCANCELLED,
@@ -564,7 +566,7 @@ func (OrderStatus) AllValues() []OrderStatus {
 // MarshalText implements encoding.TextMarshaler.
 func (s OrderStatus) MarshalText() ([]byte, error) {
 	switch s {
-	case OrderStatusUNKNOWN:
+	case OrderStatusUNSPECIFIED:
 		return []byte(s), nil
 	case OrderStatusPENDINGPAYMENT:
 		return []byte(s), nil
@@ -580,8 +582,8 @@ func (s OrderStatus) MarshalText() ([]byte, error) {
 // UnmarshalText implements encoding.TextUnmarshaler.
 func (s *OrderStatus) UnmarshalText(data []byte) error {
 	switch OrderStatus(data) {
-	case OrderStatusUNKNOWN:
-		*s = OrderStatusUNKNOWN
+	case OrderStatusUNSPECIFIED:
+		*s = OrderStatusUNSPECIFIED
 		return nil
 	case OrderStatusPENDINGPAYMENT:
 		*s = OrderStatusPENDINGPAYMENT
@@ -693,3 +695,34 @@ func (s *PaymentMethod) UnmarshalText(data []byte) error {
 		return errors.Errorf("invalid value: %q", data)
 	}
 }
+
+// Ref: #
+type UnprocessableEntityError struct {
+	// HTTP-код ошибки.
+	Code int `json:"code"`
+	// Описание ошибки.
+	Message string `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *UnprocessableEntityError) GetCode() int {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *UnprocessableEntityError) GetMessage() string {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *UnprocessableEntityError) SetCode(val int) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *UnprocessableEntityError) SetMessage(val string) {
+	s.Message = val
+}
+
+func (*UnprocessableEntityError) createOrderRes() {}
+func (*UnprocessableEntityError) payOrderRes()    {}

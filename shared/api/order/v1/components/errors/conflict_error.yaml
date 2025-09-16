@@ -10,4 +10,4 @@ properties:
   message:
     type: string
     description: Описание ошибки
-    example: "OnConflict error occurred"
+    example: "OnConflict serviceErrors occurred"

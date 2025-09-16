@@ -25,14 +25,26 @@ post:
         application/json:
           schema:
             $ref: ../components/errors/not_found_error.yaml
+    '409':
+      description: Order already paid and can't be cancelled
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/conflict_error.yaml
+    '422':
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/unprocessable_entity_error.yaml
     '500':
-      description: Internal server error
+      description: Internal server serviceErrors
       content:
         application/json:
           schema:
             $ref: ../components/errors/internal_server_error.yaml
     default:
-      description: Unexpected error
+      description: Unexpected serviceErrors
       content:
         application/json:
           schema:

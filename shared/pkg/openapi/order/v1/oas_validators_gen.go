@@ -133,7 +133,7 @@ func (s *GetOrderResponse) Validate() error {
 
 func (s OrderStatus) Validate() error {
 	switch s {
-	case "UNKNOWN":
+	case "UNSPECIFIED":
 		return nil
 	case "PENDING_PAYMENT":
 		return nil

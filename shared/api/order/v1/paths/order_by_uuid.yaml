@@ -20,13 +20,13 @@ get:
           schema:
             $ref: ../components/errors/not_found_error.yaml
     '500':
-      description: Internal server error
+      description: Internal server serviceErrors
       content:
         application/json:
           schema:
             $ref: ../components/errors/internal_server_error.yaml
     default:
-      description: Unexpected error
+      description: Unexpected serviceErrors
       content:
         application/json:
           schema:
