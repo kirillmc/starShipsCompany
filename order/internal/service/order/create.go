@@ -55,6 +55,9 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 			err = tx.Rollback(ctx)
 		} else {
 			err = tx.Commit(ctx)
+			if err == nil {
+				return
+			}
 		}
 
 		log.Printf("ошибка отката транзакции: %s", err.Error())
@@ -70,7 +73,7 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 		return model.OrderInfo{}, err
 	}
 
-	err = s.orderPartRepo.Create(ctx, tx, orderInfo.ID, partsUUIDS)
+	err = s.orderRepo.CreateOrderParts(ctx, tx, orderInfo.ID, partsUUIDS)
 	if err != nil {
 		return model.OrderInfo{}, err
 	}

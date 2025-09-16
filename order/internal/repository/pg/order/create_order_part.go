@@ -1,4 +1,4 @@
-package orderPart
+package order
 
 import (
 	"context"
@@ -10,10 +10,12 @@ import (
 	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 )
 
-func (r *repository) Create(ctx context.Context, tx pgx.Tx, orderID model.OrderID, partUUIDs []model.PartUUID) error {
-	const op = "Create"
+func (r *repository) CreateOrderParts(ctx context.Context, tx pgx.Tx, orderID model.OrderID,
+	partUUIDs []model.PartUUID,
+) error {
+	const op = "CreateOrderParts"
 
-	insertBuilder := sq.Insert(tableName).PlaceholderFormat(sq.Dollar).Columns(orderIDColumn, partUUIDColumn)
+	insertBuilder := sq.Insert(ordersPartsTable).PlaceholderFormat(sq.Dollar).Columns(orderIDColumn, partUUIDColumn)
 
 	for _, partUUID := range partUUIDs {
 		insertBuilder = insertBuilder.Values(orderID, partUUID)

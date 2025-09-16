@@ -11,7 +11,6 @@ var _ def.Service = (*service)(nil)
 
 type service struct {
 	orderRepo       pg.OrderRepository
-	orderPartRepo   pg.OrderPartRepository
 	paymentClient   grpc.PaymentClient
 	inventoryClient grpc.InventoryClient
 
@@ -23,14 +22,11 @@ func NewService(
 	inventoryClient grpc.InventoryClient,
 	paymentClient grpc.PaymentClient,
 	orderRepo pg.OrderRepository,
-	orderPartRepo pg.OrderPartRepository,
 ) *service {
 	return &service{
 		inventoryClient: inventoryClient,
 		paymentClient:   paymentClient,
 		orderRepo:       orderRepo,
-		orderPartRepo:   orderPartRepo,
-
-		pool: pool,
+		pool:            pool,
 	}
 }

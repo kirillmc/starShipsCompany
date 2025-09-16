@@ -32,7 +32,6 @@ func (s *ServiceSuite) SetupTest() {
 		s.inventoryClient,
 		s.paymentClient,
 		s.orderRepository,
-		s.orderPartRepository,
 	)
 }
 

@@ -1,25 +1,49 @@
 package converter
 
 import (
+	"fmt"
+
 	model "github.com/kirillmc/starShipsCompany/order/internal/model"
 	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/model"
+	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 )
 
-func ToModelOrder(order *repoModel.Order) model.Order {
-	if order == nil {
-		return model.Order{}
+func ToModelOrder(ordersWthParts []*repoModel.OrderWthPart) (model.Order, error) {
+	if len(ordersWthParts) == 0 {
+		return model.Order{}, fmt.Errorf("%w: order not found", serviceErrors.ErrNotFound)
 	}
 
-	serviceOrder := model.Order{
-		OrderUUID:       order.OrderUUID,
-		UserUUID:        order.UserUUID,
-		TotalPrice:      order.TotalPrice,
-		TransactionUUID: order.TransactionUUID,
-		PaymentMethod:   ToModelPaymentMethod(order.PaymentMethod),
-		Status:          ToModelOrderStatus(order.Status),
+	serviceOrder, err := getNotNilOrder(ordersWthParts)
+	if err != nil {
+		return model.Order{}, err
 	}
 
-	return serviceOrder
+	partUUIDS := make([]model.PartUUID, 0, len(ordersWthParts))
+	for _, orderWthPart := range ordersWthParts {
+		if orderWthPart != nil && orderWthPart.PartUUID != nil {
+			partUUIDS = append(partUUIDS, *orderWthPart.PartUUID)
+		}
+	}
+	serviceOrder.PartUUIDs = partUUIDS
+
+	return serviceOrder, nil
+}
+
+func getNotNilOrder(ordersWthParts []*repoModel.OrderWthPart) (model.Order, error) {
+	for _, orderWthPart := range ordersWthParts {
+		if orderWthPart != nil {
+			return model.Order{
+				OrderUUID:       orderWthPart.OrderUUID,
+				UserUUID:        orderWthPart.UserUUID,
+				TotalPrice:      orderWthPart.TotalPrice,
+				TransactionUUID: orderWthPart.TransactionUUID,
+				PaymentMethod:   ToModelPaymentMethod(orderWthPart.PaymentMethod),
+				Status:          ToModelOrderStatus(orderWthPart.Status),
+			}, nil
+		}
+	}
+
+	return model.Order{}, fmt.Errorf("%w: order not found", serviceErrors.ErrNotFound)
 }
 
 func ToRepoGetOrderParams(params model.GetOrderParams) repoModel.GetOrderParams {
@@ -30,12 +54,10 @@ func ToRepoGetOrderParams(params model.GetOrderParams) repoModel.GetOrderParams 
 
 func ToRepoCreateOrder(createOrder model.CreateOrder) repoModel.Order {
 	orderMapped := repoModel.Order{
-		OrderUUID:       createOrder.OrderUUID,
-		UserUUID:        createOrder.UserUUID,
-		TotalPrice:      createOrder.TotalPrice,
-		TransactionUUID: "",
-		PaymentMethod:   "",
-		Status:          repoModel.OrderStatusPendingPayment,
+		OrderUUID:  createOrder.OrderUUID,
+		UserUUID:   createOrder.UserUUID,
+		TotalPrice: createOrder.TotalPrice,
+		Status:     repoModel.OrderStatusPendingPayment,
 	}
 
 	return orderMapped

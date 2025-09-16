@@ -84,6 +84,55 @@ func (_c *OrderRepository_Create_Call) RunAndReturn(run func(context.Context, pg
 	return _c
 }
 
+// CreateOrderParts provides a mock function with given fields: ctx, tx, orderID, partUUIDs
+func (_m *OrderRepository) CreateOrderParts(ctx context.Context, tx pgx.Tx, orderID model.OrderID, partUUIDs []model.PartUUID) error {
+	ret := _m.Called(ctx, tx, orderID, partUUIDs)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateOrderParts")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, pgx.Tx, model.OrderID, []model.PartUUID) error); ok {
+		r0 = rf(ctx, tx, orderID, partUUIDs)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// OrderRepository_CreateOrderParts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateOrderParts'
+type OrderRepository_CreateOrderParts_Call struct {
+	*mock.Call
+}
+
+// CreateOrderParts is a helper method to define mock.On call
+//   - ctx context.Context
+//   - tx pgx.Tx
+//   - orderID model.OrderID
+//   - partUUIDs []model.PartUUID
+func (_e *OrderRepository_Expecter) CreateOrderParts(ctx interface{}, tx interface{}, orderID interface{}, partUUIDs interface{}) *OrderRepository_CreateOrderParts_Call {
+	return &OrderRepository_CreateOrderParts_Call{Call: _e.mock.On("CreateOrderParts", ctx, tx, orderID, partUUIDs)}
+}
+
+func (_c *OrderRepository_CreateOrderParts_Call) Run(run func(ctx context.Context, tx pgx.Tx, orderID model.OrderID, partUUIDs []model.PartUUID)) *OrderRepository_CreateOrderParts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(pgx.Tx), args[2].(model.OrderID), args[3].([]model.PartUUID))
+	})
+	return _c
+}
+
+func (_c *OrderRepository_CreateOrderParts_Call) Return(_a0 error) *OrderRepository_CreateOrderParts_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *OrderRepository_CreateOrderParts_Call) RunAndReturn(run func(context.Context, pgx.Tx, model.OrderID, []model.PartUUID) error) *OrderRepository_CreateOrderParts_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Get provides a mock function with given fields: ctx, orderUUID
 func (_m *OrderRepository) Get(ctx context.Context, orderUUID model.OrderUUID) (model.Order, error) {
 	ret := _m.Called(ctx, orderUUID)
@@ -137,6 +186,65 @@ func (_c *OrderRepository_Get_Call) Return(_a0 model.Order, _a1 error) *OrderRep
 }
 
 func (_c *OrderRepository_Get_Call) RunAndReturn(run func(context.Context, model.OrderUUID) (model.Order, error)) *OrderRepository_Get_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// IndexOrderParts provides a mock function with given fields: ctx, orderID
+func (_m *OrderRepository) IndexOrderParts(ctx context.Context, orderID model.OrderID) ([]model.PartUUID, error) {
+	ret := _m.Called(ctx, orderID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for IndexOrderParts")
+	}
+
+	var r0 []model.PartUUID
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, model.OrderID) ([]model.PartUUID, error)); ok {
+		return rf(ctx, orderID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, model.OrderID) []model.PartUUID); ok {
+		r0 = rf(ctx, orderID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]model.PartUUID)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, model.OrderID) error); ok {
+		r1 = rf(ctx, orderID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// OrderRepository_IndexOrderParts_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IndexOrderParts'
+type OrderRepository_IndexOrderParts_Call struct {
+	*mock.Call
+}
+
+// IndexOrderParts is a helper method to define mock.On call
+//   - ctx context.Context
+//   - orderID model.OrderID
+func (_e *OrderRepository_Expecter) IndexOrderParts(ctx interface{}, orderID interface{}) *OrderRepository_IndexOrderParts_Call {
+	return &OrderRepository_IndexOrderParts_Call{Call: _e.mock.On("IndexOrderParts", ctx, orderID)}
+}
+
+func (_c *OrderRepository_IndexOrderParts_Call) Run(run func(ctx context.Context, orderID model.OrderID)) *OrderRepository_IndexOrderParts_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(model.OrderID))
+	})
+	return _c
+}
+
+func (_c *OrderRepository_IndexOrderParts_Call) Return(_a0 []model.PartUUID, _a1 error) *OrderRepository_IndexOrderParts_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *OrderRepository_IndexOrderParts_Call) RunAndReturn(run func(context.Context, model.OrderID) ([]model.PartUUID, error)) *OrderRepository_IndexOrderParts_Call {
 	_c.Call.Return(run)
 	return _c
 }

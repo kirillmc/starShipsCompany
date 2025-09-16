@@ -12,11 +12,5 @@ func (s *service) Get(ctx context.Context, params model.GetOrderParams) (model.O
 		return model.Order{}, err
 	}
 
-	partUUIDs, err := s.orderPartRepo.Index(ctx, order.ID)
-	if err != nil {
-		return model.Order{}, err
-	}
-	order.PartUUIDs = partUUIDs
-
 	return order, nil
 }
