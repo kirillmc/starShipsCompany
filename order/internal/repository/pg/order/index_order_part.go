@@ -1,4 +1,4 @@
-package orderPart
+package order
 
 import (
 	"context"
@@ -10,11 +10,11 @@ import (
 	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 )
 
-func (r *repository) Index(ctx context.Context, orderID model.OrderID) ([]model.PartUUID, error) {
-	const op = "Index"
+func (r *repository) IndexOrderParts(ctx context.Context, orderID model.OrderID) ([]model.PartUUID, error) {
+	const op = "IndexOrderParts"
 
 	selectBuilder := sq.Select(partUUIDColumn).
-		From(tableName).
+		From(ordersPartsTable).
 		Where(sq.Eq{orderIDColumn: orderID}).
 		PlaceholderFormat(sq.Dollar)
 

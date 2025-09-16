@@ -20,9 +20,8 @@ func (r *repository) Create(ctx context.Context, tx pgx.Tx, order model.CreateOr
 	orderRepo := converter.ToRepoCreateOrder(order)
 	insertBuilder := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
-		Columns(orderUUIDColumn, userUUIDColumn, transactionUUIDColumn,
-			totalPriceColumn, paymentMethodColumn, statusColumn).
-		Values(orderRepo.OrderUUID, orderRepo.UserUUID, orderRepo.TransactionUUID,
+		Columns(orderUUIDColumn, userUUIDColumn, totalPriceColumn, paymentMethodColumn, statusColumn).
+		Values(orderRepo.OrderUUID, orderRepo.UserUUID,
 			orderRepo.TotalPrice, orderRepo.PaymentMethod, orderRepo.Status).
 		Suffix(fmt.Sprintf(returningPrefix, idColumn, orderUUIDColumn, totalPriceColumn))
 

@@ -21,7 +21,6 @@ import (
 	paymentClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/payment/v1"
 	"github.com/kirillmc/starShipsCompany/order/internal/migrator"
 	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/order"
-	orderPartRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/order_part"
 	orderService "github.com/kirillmc/starShipsCompany/order/internal/service/order"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
@@ -102,8 +101,7 @@ func main() {
 	}
 
 	orderStorage := orderRepository.NewRepository(pool)
-	orderPartStorage := orderPartRepository.NewRepository(pool)
-	service := orderService.NewService(pool, inventoryClient, paymentClient, orderStorage, orderPartStorage)
+	service := orderService.NewService(pool, inventoryClient, paymentClient, orderStorage)
 
 	orderHandler := orderAPI.NewAPI(service)
 

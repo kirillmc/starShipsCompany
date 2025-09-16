@@ -5,9 +5,13 @@ import (
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 )
 
-func ToAPITransactionUUID(transactionUUID model.TransactionUUID) orderV1.OptString {
+func ToAPITransactionUUID(transactionUUID *model.TransactionUUID) orderV1.OptString {
+	if transactionUUID == nil {
+		return orderV1.OptString{}
+	}
+
 	return orderV1.OptString{
-		Value: transactionUUID,
+		Value: *transactionUUID,
 		Set:   true,
 	}
 }
