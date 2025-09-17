@@ -3,7 +3,7 @@ package testcontainers
 // MongoDB constants
 const (
 	// MongoDB container constants
-	MongoContainerName = "mongoRepo"
+	MongoContainerName = "mongo-inventory"
 	MongoPort          = "27017"
 
 	// MongoDB environment variables
