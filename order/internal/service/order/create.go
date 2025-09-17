@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 )
@@ -40,13 +42,38 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 			fmt.Errorf("order with UUID %s already exists: %w", orderUUID, serviceErrors.ErrOnConflict)
 	}
 
+	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return model.OrderInfo{}, fmt.Errorf("%w: ошибка начала транзакции: %s",
+			serviceErrors.ErrInternalServer, err.Error())
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			err = tx.Rollback(ctx)
+			panic(p)
+		} else if err != nil {
+			err = tx.Rollback(ctx)
+		} else {
+			err = tx.Commit(ctx)
+			if err == nil {
+				return
+			}
+		}
+
+		log.Printf("ошибка отката транзакции: %s", err.Error())
+	}()
+
 	createOrderInfo := model.CreateOrder{
 		OrderUUID:  orderUUID,
 		UserUUID:   userUUID,
-		PartsUUIDS: partsUUIDS,
 		TotalPrice: totalPrice,
 	}
-	orderInfo, err := s.repo.Create(ctx, createOrderInfo)
+	orderInfo, err := s.orderRepo.Create(ctx, tx, createOrderInfo)
+	if err != nil {
+		return model.OrderInfo{}, err
+	}
+
+	err = s.orderRepo.CreateOrderParts(ctx, tx, orderInfo.ID, partsUUIDS)
 	if err != nil {
 		return model.OrderInfo{}, err
 	}

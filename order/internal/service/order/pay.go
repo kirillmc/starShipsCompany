@@ -10,7 +10,7 @@ import (
 )
 
 func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.TransactionUUID, error) {
-	order, err := s.repo.Get(ctx, params.OrderUUID)
+	order, err := s.orderRepo.Get(ctx, params.OrderUUID)
 	if err != nil {
 		return "", err
 	}
@@ -33,7 +33,7 @@ func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.T
 		TransactionUUID: &transactionUUID,
 		Status:          lo.ToPtr(model.OrderStatusPaid),
 	}
-	err = s.repo.UpdateOrder(ctx, updateOrderParams)
+	err = s.orderRepo.UpdateOrder(ctx, updateOrderParams)
 	if err != nil {
 		return "", err
 	}

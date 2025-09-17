@@ -84,7 +84,7 @@ func (_c *Service_Get_Call) RunAndReturn(run func(context.Context, model.PartUUI
 }
 
 // List provides a mock function with given fields: ctx, filter
-func (_m *Service) List(ctx context.Context, filter *model.PartsFilter) []*model.Part {
+func (_m *Service) List(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
 	ret := _m.Called(ctx, filter)
 
 	if len(ret) == 0 {
@@ -92,6 +92,10 @@ func (_m *Service) List(ctx context.Context, filter *model.PartsFilter) []*model
 	}
 
 	var r0 []*model.Part
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *model.PartsFilter) ([]*model.Part, error)); ok {
+		return rf(ctx, filter)
+	}
 	if rf, ok := ret.Get(0).(func(context.Context, *model.PartsFilter) []*model.Part); ok {
 		r0 = rf(ctx, filter)
 	} else {
@@ -100,7 +104,13 @@ func (_m *Service) List(ctx context.Context, filter *model.PartsFilter) []*model
 		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, *model.PartsFilter) error); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Service_List_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'List'
@@ -122,12 +132,12 @@ func (_c *Service_List_Call) Run(run func(ctx context.Context, filter *model.Par
 	return _c
 }
 
-func (_c *Service_List_Call) Return(_a0 []*model.Part) *Service_List_Call {
-	_c.Call.Return(_a0)
+func (_c *Service_List_Call) Return(_a0 []*model.Part, _a1 error) *Service_List_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *Service_List_Call) RunAndReturn(run func(context.Context, *model.PartsFilter) []*model.Part) *Service_List_Call {
+func (_c *Service_List_Call) RunAndReturn(run func(context.Context, *model.PartsFilter) ([]*model.Part, error)) *Service_List_Call {
 	_c.Call.Return(run)
 	return _c
 }

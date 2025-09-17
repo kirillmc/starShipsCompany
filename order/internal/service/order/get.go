@@ -7,7 +7,7 @@ import (
 )
 
 func (s *service) Get(ctx context.Context, params model.GetOrderParams) (model.Order, error) {
-	order, err := s.repo.Get(ctx, params.OrderUUID)
+	order, err := s.orderRepo.Get(ctx, params.OrderUUID)
 	if err != nil {
 		return model.Order{}, err
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -8,18 +9,29 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	inventoryV1API "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
-	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/part"
+	partRepo "github.com/kirillmc/starShipsCompany/inventory/internal/repository/mongo/part"
 	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const grpcPort = 50051
+const (
+	mongoURI       = "MONGO_URI"
+	mongoDB        = "MONGO_INITDB_DATABASE"
+	grpcPort       = 50051
+	envPath        = ".env.example"
+	connectionType = "tcp"
+)
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	ctx := context.Background()
+
+	lis, err := net.Listen(connectionType, fmt.Sprintf(":%d", grpcPort))
 	if err != nil {
 		log.Printf("failed to listen: %v\n", err)
 		return
@@ -28,7 +40,39 @@ func main() {
 	s := grpc.NewServer()
 	reflection.Register(s)
 
-	repo := partRepo.NewRepository()
+	err = godotenv.Load(envPath)
+	if err != nil {
+		log.Printf("failed to load .env.example file: %v\n", err)
+		return
+	}
+
+	dbURI := os.Getenv(mongoURI)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dbURI))
+	if err != nil {
+		log.Printf("failed to connect to database: %v\n", err)
+		return
+	}
+	defer func() {
+		cerr := client.Disconnect(ctx)
+		if cerr != nil {
+			log.Printf("failed to disconnect: %v\n", cerr)
+		}
+	}()
+
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Printf("failed to ping database: %v\n", err)
+		return
+	}
+
+	mongoNameDB := os.Getenv(mongoDB)
+	mongoInventoryDB := client.Database(mongoNameDB)
+	repo, err := partRepo.NewRepository(ctx, mongoInventoryDB)
+	if err != nil {
+		log.Printf("failed to init repo: %s", err)
+		return
+	}
+
 	service := partService.NewService(repo)
 	api := inventoryV1API.NewAPI(service)
 

@@ -13,10 +13,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/joho/godotenv"
 	orderAPI "github.com/kirillmc/starShipsCompany/order/internal/api/order/v1"
 	inventoryClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/inventory/v1"
 	paymentClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/payment/v1"
-	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/order"
+	"github.com/kirillmc/starShipsCompany/order/internal/migrator"
+	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/order"
 	orderService "github.com/kirillmc/starShipsCompany/order/internal/service/order"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
@@ -66,14 +70,44 @@ func main() {
 	}()
 	paymentClient := paymentClient.NewClient(paymentV1.NewPaymentServiceClient(connPayment))
 
-	storage := orderRepository.NewRepository()
-	service := orderService.NewService(inventoryClient, paymentClient, storage)
+	err = godotenv.Load(".env.example")
+	if err != nil {
+		log.Printf("failed to load .env.example file: %v\n", err)
+		return
+	}
+	dbURI := os.Getenv("DB_URI")
+
+	ctx := context.Background()
+	pool, err := pgxpool.New(ctx, dbURI)
+	if err != nil {
+		log.Printf("failed to connect to database: %v\n", err)
+		return
+	}
+	defer pool.Close()
+
+	err = pool.Ping(ctx)
+	if err != nil {
+		log.Printf("db is not available: %v\n", err)
+		return
+	}
+
+	migrationsDir := os.Getenv("MIGRATIONS_DIR")
+	migratorRunner := migrator.NewMigrator(stdlib.OpenDB(*pool.Config().Copy().ConnConfig), migrationsDir)
+
+	err = migratorRunner.Up()
+	if err != nil {
+		log.Printf("failed to migrate db: %v\n", err)
+		return
+	}
+
+	orderStorage := orderRepository.NewRepository(pool)
+	service := orderService.NewService(pool, inventoryClient, paymentClient, orderStorage)
 
 	orderHandler := orderAPI.NewAPI(service)
 
 	orderServer, err := orderV1.NewServer(orderHandler)
 	if err != nil {
-		log.Printf("ошибка создания сервера OpenAPI: %v", err)
+		log.Printf("failed to create OpenAPI server: %v", err)
 		return
 	}
 
