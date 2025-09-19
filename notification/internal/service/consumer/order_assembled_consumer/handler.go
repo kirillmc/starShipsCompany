@@ -1,0 +1,1 @@
+package order_assembled_consumer
