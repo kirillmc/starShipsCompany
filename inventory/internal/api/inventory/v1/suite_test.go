@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"testing"
 
 	"github.com/kirillmc/starShipsCompany/inventory/internal/service/mocks"
@@ -17,6 +18,8 @@ type ServiceSuite struct {
 
 func (s *ServiceSuite) SetupTest() {
 	s.service = mocks.NewService(s.T())
+
+	logger.Init("", true)
 
 	s.api = NewAPI(
 		s.service,
