@@ -3,13 +3,13 @@ package v1
 import (
 	"context"
 	"errors"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
+	"go.uber.org/zap"
 )
 
 func (a *api) CancelOrder(ctx context.Context, params orderV1.CancelOrderParams) (orderV1.CancelOrderRes, error) {

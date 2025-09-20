@@ -21,7 +21,6 @@ func (r *repository) Get(ctx context.Context, partUUID model.PartUUID) (*model.P
 	if err != nil {
 		return &model.Part{}, fmt.Errorf("%w: failed to execute %s: %s",
 			serviceErrors.ErrInternalServer, op, err.Error())
-
 	}
 
 	return converter.ToModelPart(part), nil

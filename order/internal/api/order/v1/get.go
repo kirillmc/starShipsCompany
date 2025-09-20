@@ -2,15 +2,15 @@ package v1
 
 import (
 	"context"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/go-faster/errors"
 	"github.com/kirillmc/starShipsCompany/order/internal/converter"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
+	"go.uber.org/zap"
 )
 
 func (a *api) GetOrder(ctx context.Context, params orderV1.GetOrderParams) (orderV1.GetOrderRes, error) {

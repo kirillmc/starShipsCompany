@@ -3,8 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	"go.uber.org/zap"
 
 	v1 "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/config"
@@ -13,10 +11,12 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/service"
 	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.uber.org/zap"
 )
 
 type diContainer struct {

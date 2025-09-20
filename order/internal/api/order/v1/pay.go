@@ -3,13 +3,13 @@ package v1
 import (
 	"context"
 	"errors"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/kirillmc/starShipsCompany/order/internal/converter"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
+	"go.uber.org/zap"
 )
 
 func (a *api) PayOrder(ctx context.Context, req *orderV1.PayOrderRequest, params orderV1.PayOrderParams) (orderV1.PayOrderRes, error) {
