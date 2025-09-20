@@ -1,9 +1,10 @@
 package v1
 
 import (
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"os"
 	"testing"
+
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 )
 
 func TestMain(m *testing.M) {
