@@ -6,9 +6,7 @@ import (
 
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"github.com/samber/lo"
-	"go.uber.org/zap"
 )
 
 func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.TransactionUUID, error) {
@@ -18,13 +16,10 @@ func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.T
 	}
 
 	if order.Status == model.OrderStatusPaid {
-		logger.Error(ctx, fmt.Sprintf("order with UUID %s is already paid", params.OrderUUID), zap.Error(err))
 		return "", fmt.Errorf("order is aleready paid: %w", serviceErrors.ErrOnConflict)
 	}
 
 	if order.Status == model.OrderStatusCancelled {
-		logger.Error(ctx, fmt.Sprintf("order with UUID %s is already cancelled",
-			params.OrderUUID), zap.Error(err))
 		return "", fmt.Errorf("order is aleready cancelled: %w", serviceErrors.ErrOnConflict)
 	}
 

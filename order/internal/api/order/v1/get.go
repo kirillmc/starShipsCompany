@@ -2,6 +2,8 @@ package v1
 
 import (
 	"context"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/go-faster/errors"
@@ -14,6 +16,8 @@ import (
 func (a *api) GetOrder(ctx context.Context, params orderV1.GetOrderParams) (orderV1.GetOrderRes, error) {
 	order, err := a.orderService.Get(ctx, model.GetOrderParams{OrderUUID: params.OrderUUID.String()})
 	if err != nil {
+		logger.Error(ctx, "failed to get order", zap.Error(err))
+
 		if errors.Is(err, serviceErrors.ErrNotFound) {
 			return &orderV1.NotFoundError{
 				Code:    http.StatusNotFound,

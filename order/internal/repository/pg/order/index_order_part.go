@@ -8,8 +8,6 @@ import (
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 func (r *repository) IndexOrderParts(ctx context.Context, orderID model.OrderID) ([]model.PartUUID, error) {
@@ -22,7 +20,6 @@ func (r *repository) IndexOrderParts(ctx context.Context, orderID model.OrderID)
 
 	query, args, err := selectBuilder.ToSql()
 	if err != nil {
-		logger.Error(ctx, fmt.Sprintf("failed to build %s query", op), zap.Error(err))
 		return []model.PartUUID{}, fmt.Errorf("%w: failed to build %s query: %s",
 			serviceErrors.ErrInternalServer, op, err.Error())
 	}
@@ -30,7 +27,6 @@ func (r *repository) IndexOrderParts(ctx context.Context, orderID model.OrderID)
 	var partUUIDs []repoModel.PartUUID
 	rows, err := r.pool.Query(ctx, query, args...)
 	if err != nil {
-		logger.Error(ctx, fmt.Sprintf("failed to execute %s query", op), zap.Error(err))
 		return []model.PartUUID{}, fmt.Errorf("%w: failed to execute %s query: %s",
 			serviceErrors.ErrInternalServer, op, err.Error())
 	}
@@ -39,7 +35,6 @@ func (r *repository) IndexOrderParts(ctx context.Context, orderID model.OrderID)
 		var partUUID repoModel.PartUUID
 		err = rows.Scan(&partUUID)
 		if err != nil {
-			logger.Error(ctx, fmt.Sprintf("failed during scanning values after %s query", op), zap.Error(err))
 			return []model.PartUUID{}, fmt.Errorf("%w: failed during scanning values after %s query: %s",
 				serviceErrors.ErrInternalServer, op, err.Error())
 		}

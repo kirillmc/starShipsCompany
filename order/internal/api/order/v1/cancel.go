@@ -3,6 +3,8 @@ package v1
 import (
 	"context"
 	"errors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
@@ -13,6 +15,8 @@ import (
 func (a *api) CancelOrder(ctx context.Context, params orderV1.CancelOrderParams) (orderV1.CancelOrderRes, error) {
 	err := a.orderService.Cancel(ctx, model.CancelOrderParams{OrderUUID: params.OrderUUID.String()})
 	if err != nil {
+		logger.Error(ctx, "failed to cancel order", zap.Error(err))
+
 		if errors.Is(err, serviceErrors.ErrNotFound) {
 			return &orderV1.NotFoundError{
 				Code:    http.StatusNotFound,

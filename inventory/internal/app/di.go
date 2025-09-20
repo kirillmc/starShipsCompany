@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 
 	v1 "github.com/kirillmc/starShipsCompany/inventory/internal/api/inventory/v1"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/config"
@@ -52,6 +54,7 @@ func (d *diContainer) InventoryRepository(ctx context.Context) mongoRepo.Reposit
 		var err error
 		d.inventoryRepository, err = partRepo.NewRepository(ctx, d.MongoDBHandle(ctx))
 		if err != nil {
+			logger.Error(ctx, "failed to create new repository", zap.Error(err))
 			panic(fmt.Sprintf("failed to create new repository: %s\n", err.Error()))
 		}
 	}
@@ -63,11 +66,14 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 	if d.mongoDBClient == nil {
 		client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.AppConfig().Mongo.URI()))
 		if err != nil {
+			logger.Error(ctx, "failed to connect to MongoDB", zap.Error(err))
 			panic(fmt.Sprintf("failed to connect to MongoDB: %s\n", err.Error()))
 		}
 
 		err = client.Ping(ctx, readpref.Primary())
 		if err != nil {
+
+			logger.Error(ctx, "failed to ping MongoDB", zap.Error(err))
 			panic(fmt.Sprintf("failed to ping MongoDB: %v\n", err))
 		}
 
