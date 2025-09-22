@@ -13,6 +13,8 @@ func ToModelOrderStatus(status repoModel.OrderStatus) model.OrderStatus {
 		return model.OrderStatusPaid
 	case repoModel.OrderStatusCancelled:
 		return model.OrderStatusCancelled
+	case repoModel.OrderStatusAssembled:
+		return model.OrderStatusAssembled
 	default:
 		return model.OrderStatusUnspecified
 	}
@@ -26,6 +28,8 @@ func ToRepoOrderStatus(status model.OrderStatus) repoModel.OrderStatus {
 		return repoModel.OrderStatusPaid
 	case model.OrderStatusCancelled:
 		return repoModel.OrderStatusCancelled
+	case model.OrderStatusAssembled:
+		return repoModel.OrderStatusAssembled
 	default:
 		return repoModel.OrderStatusUnspecified
 	}

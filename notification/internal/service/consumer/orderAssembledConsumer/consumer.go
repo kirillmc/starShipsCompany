@@ -29,11 +29,11 @@ func NewService(orderAssembledConsumer kafka.Consumer,
 }
 
 func (s *service) RunOrderAssembledConsumer(ctx context.Context) error {
-	logger.Info(ctx, "Starting order paid consumer service")
+	logger.Info(ctx, "Starting order assembler consumer service")
 
 	err := s.orderAssembledConsumer.Consume(ctx, s.OrderHandler)
 	if err != nil {
-		logger.Error(ctx, "Consume from order.paid topic error", zap.Error(err))
+		logger.Error(ctx, "Consume from order.assembler topic error", zap.Error(err))
 		return err
 	}
 

@@ -2,7 +2,7 @@ package telegram
 
 import "github.com/kirillmc/starShipsCompany/notification/internal/client/http"
 
-const chatID = 234586218
+const chatID = 320790952
 
 type service struct {
 	telegramClient http.TelegramClient

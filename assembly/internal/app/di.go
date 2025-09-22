@@ -121,6 +121,8 @@ func (d *diContainer) SyncProducer() sarama.SyncProducer {
 		closer.AddNamed("Kafka sync producer", func(ctx context.Context) error {
 			return p.Close()
 		})
+
+		d.syncProducer = p
 	}
 
 	return d.syncProducer
