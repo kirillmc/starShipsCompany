@@ -14,6 +14,8 @@ type service struct {
 	paymentClient   grpc.PaymentClient
 	inventoryClient grpc.InventoryClient
 
+	orderPaidProducer def.OrderProducerService
+
 	pool *pgxpool.Pool
 }
 
@@ -21,12 +23,15 @@ func NewService(
 	pool *pgxpool.Pool,
 	inventoryClient grpc.InventoryClient,
 	paymentClient grpc.PaymentClient,
+
+	orderPaidProducer def.OrderProducerService,
 	orderRepo pg.OrderRepository,
 ) *service {
 	return &service{
-		inventoryClient: inventoryClient,
-		paymentClient:   paymentClient,
-		orderRepo:       orderRepo,
-		pool:            pool,
+		inventoryClient:   inventoryClient,
+		paymentClient:     paymentClient,
+		orderRepo:         orderRepo,
+		orderPaidProducer: orderPaidProducer,
+		pool:              pool,
 	}
 }
