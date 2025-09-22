@@ -1,17 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/kirillmc/starShipsCompany/assembly/internal/app"
 	"github.com/kirillmc/starShipsCompany/assembly/internal/config"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"go.uber.org/zap"
-	"os/signal"
-	"syscall"
-	"time"
-
-	"context"
 )
 
 const configPath = "./deploy/compose/assembly/.env"

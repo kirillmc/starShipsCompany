@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+
 	"github.com/kirillmc/starShipsCompany/assembly/internal/config"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"

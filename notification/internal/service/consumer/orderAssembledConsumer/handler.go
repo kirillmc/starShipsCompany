@@ -2,6 +2,7 @@ package orderAssembledConsumer
 
 import (
 	"context"
+
 	"github.com/kirillmc/starShipsCompany/platform/pkg/kafka/consumer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"go.uber.org/zap"

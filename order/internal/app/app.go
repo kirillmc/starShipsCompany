@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/kirillmc/starShipsCompany/order/internal/config"
@@ -11,7 +13,6 @@ import (
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type App struct {
@@ -102,7 +103,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	//r.Use(middleware.Timeout(10 * time.Second))
+	// r.Use(middleware.Timeout(10 * time.Second))
 
 	r.Mount("/", orderServer)
 

@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"context"
 	"embed"
-	"github.com/kirillmc/starShipsCompany/notification/internal/model"
 	"html/template"
+
+	"github.com/kirillmc/starShipsCompany/notification/internal/model"
 )
 
 //go:embed templates/paid_notification.tmpl

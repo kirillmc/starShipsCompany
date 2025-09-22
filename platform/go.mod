@@ -3,6 +3,7 @@ module github.com/kirillmc/starShipsCompany/platform
 go 1.24.5
 
 require (
+	github.com/IBM/sarama v1.46.0
 	github.com/docker/docker v28.1.1+incompatible
 	github.com/docker/go-connections v0.6.0
 	github.com/pkg/errors v0.9.1
@@ -15,7 +16,6 @@ require (
 require (
 	dario.cat/mergo v1.0.2 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
-	github.com/IBM/sarama v1.46.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/containerd/log v0.1.0 // indirect

@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+
 	"github.com/kirillmc/starShipsCompany/platform/pkg/kafka/consumer"
 )
 

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+
 	"github.com/IBM/sarama"
 	"github.com/go-telegram/bot"
 	httpClient "github.com/kirillmc/starShipsCompany/notification/internal/client/http"

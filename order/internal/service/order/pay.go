@@ -3,8 +3,8 @@ package order
 import (
 	"context"
 	"fmt"
-	"github.com/kirillmc/starShipsCompany/order/internal/converter"
 
+	"github.com/kirillmc/starShipsCompany/order/internal/converter"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"

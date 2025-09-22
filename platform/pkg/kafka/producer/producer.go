@@ -2,6 +2,7 @@ package producer
 
 import (
 	"context"
+
 	"github.com/IBM/sarama"
 	"go.uber.org/zap"
 )
@@ -11,12 +12,14 @@ type Logger interface {
 	Error(ctx context.Context, msg string, fields ...zap.Field)
 }
 
-type TopicName = string
-type producer struct {
-	syncProducer sarama.SyncProducer
-	topic        TopicName
-	logger       Logger
-}
+type (
+	TopicName = string
+	producer  struct {
+		syncProducer sarama.SyncProducer
+		topic        TopicName
+		logger       Logger
+	}
+)
 
 func NewProducer(syncProducer sarama.SyncProducer, topic TopicName, logger Logger) *producer {
 	return &producer{

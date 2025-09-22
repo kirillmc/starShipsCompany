@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"github.com/kirillmc/starShipsCompany/notification/internal/config"
@@ -125,6 +126,7 @@ func (a *App) runOrderPaidConsumer(ctx context.Context) error {
 
 	return nil
 }
+
 func (a *App) runOrderAssembledConsumer(ctx context.Context) error {
 	logger.Info(ctx, "🚀 OrderAssembled Kafka consumer running")
 

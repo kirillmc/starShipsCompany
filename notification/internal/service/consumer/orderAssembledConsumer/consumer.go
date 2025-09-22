@@ -2,6 +2,7 @@ package orderAssembledConsumer
 
 import (
 	"context"
+
 	kafkaConverter "github.com/kirillmc/starShipsCompany/notification/internal/converter/kafka"
 	def "github.com/kirillmc/starShipsCompany/notification/internal/service"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/kafka"
@@ -20,7 +21,8 @@ type service struct {
 
 func NewService(orderAssembledConsumer kafka.Consumer,
 	orderAssembledDecoder kafkaConverter.OrderAssembledDecoder,
-	telegramService def.TelegramService) *service {
+	telegramService def.TelegramService,
+) *service {
 	return &service{
 		orderAssembledConsumer: orderAssembledConsumer,
 		orderAssembledDecoder:  orderAssembledDecoder,

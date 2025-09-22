@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/kirillmc/starShipsCompany/notification/internal/app"
 	"github.com/kirillmc/starShipsCompany/notification/internal/config"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"go.uber.org/zap"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 const configPath = "./deploy/compose/notification/.env"

@@ -2,6 +2,7 @@ package orderProducer
 
 import (
 	"context"
+
 	"github.com/kirillmc/starShipsCompany/assembly/internal/model"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/kafka"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"

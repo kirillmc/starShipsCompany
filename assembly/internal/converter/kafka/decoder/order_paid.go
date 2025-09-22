@@ -2,6 +2,7 @@ package decoder
 
 import (
 	"fmt"
+
 	"github.com/kirillmc/starShipsCompany/assembly/internal/model"
 	eventsV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/events/v1"
 	"google.golang.org/protobuf/proto"

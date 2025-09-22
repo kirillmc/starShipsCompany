@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+
 	"github.com/IBM/sarama"
 	"github.com/kirillmc/starShipsCompany/assembly/internal/config"
 	kafkaConverter "github.com/kirillmc/starShipsCompany/assembly/internal/converter/kafka"

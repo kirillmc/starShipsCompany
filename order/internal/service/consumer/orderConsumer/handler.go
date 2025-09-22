@@ -2,6 +2,7 @@ package orderConsumer
 
 import (
 	"context"
+
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/kafka/consumer"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
@@ -17,8 +18,10 @@ func (s *service) OrderHandler(ctx context.Context, msg consumer.Message) error 
 	}
 
 	err = s.orderService.Update(ctx,
-		model.UpdateOrderParams{OrderUUID: event.OrderUUID,
-			Status: lo.ToPtr(model.OrderStatusAssembled)})
+		model.UpdateOrderParams{
+			OrderUUID: event.OrderUUID,
+			Status:    lo.ToPtr(model.OrderStatusAssembled),
+		})
 	if err != nil {
 		logger.Error(ctx, "Failed to set order status ASSEMBLED", zap.Error(err))
 		return err

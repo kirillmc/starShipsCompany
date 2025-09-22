@@ -1,9 +1,10 @@
 package config
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/kirillmc/starShipsCompany/notification/internal/config/env"
-	"os"
 )
 
 type config struct {
