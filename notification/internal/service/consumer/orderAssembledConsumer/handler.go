@@ -14,7 +14,11 @@ func (s *service) OrderHandler(ctx context.Context, msg consumer.Message) error 
 		return err
 	}
 
-	_ = event
+	err = s.telegramService.SendOrderAssembledNotification(ctx, event)
+	if err != nil {
+		logger.Error(ctx, "Failed to send order assembled notification", zap.Error(err))
+		return err
+	}
 
 	return nil
 }

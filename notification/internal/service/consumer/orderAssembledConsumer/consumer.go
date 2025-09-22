@@ -9,22 +9,26 @@ import (
 	"go.uber.org/zap"
 )
 
-var _ def.ConsumerService = (*service)(nil)
+var _ def.OrderAssembledConsumerService = (*service)(nil)
 
 type service struct {
 	orderAssembledConsumer kafka.Consumer
 	orderAssembledDecoder  kafkaConverter.OrderAssembledDecoder
+
+	telegramService def.TelegramService
 }
 
 func NewService(orderAssembledConsumer kafka.Consumer,
-	orderAssembledDecoder kafkaConverter.OrderAssembledDecoder) *service {
+	orderAssembledDecoder kafkaConverter.OrderAssembledDecoder,
+	telegramService def.TelegramService) *service {
 	return &service{
 		orderAssembledConsumer: orderAssembledConsumer,
 		orderAssembledDecoder:  orderAssembledDecoder,
+		telegramService:        telegramService,
 	}
 }
 
-func (s *service) RunConsumer(ctx context.Context) error {
+func (s *service) RunOrderAssembledConsumer(ctx context.Context) error {
 	logger.Info(ctx, "Starting order paid consumer service")
 
 	err := s.orderAssembledConsumer.Consume(ctx, s.OrderHandler)
