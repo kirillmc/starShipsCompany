@@ -2,150 +2,60 @@ package main
 
 import (
 	"context"
-	"errors"
-	"log"
-	"net"
-	"net/http"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/jackc/pgx/v5/stdlib"
-	"github.com/joho/godotenv"
-	orderAPI "github.com/kirillmc/starShipsCompany/order/internal/api/order/v1"
-	inventoryClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/inventory/v1"
-	paymentClient "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/payment/v1"
-	"github.com/kirillmc/starShipsCompany/order/internal/migrator"
-	orderRepository "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/order"
-	orderService "github.com/kirillmc/starShipsCompany/order/internal/service/order"
-	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
-	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
-	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"github.com/kirillmc/starShipsCompany/order/internal/app"
+	"github.com/kirillmc/starShipsCompany/order/internal/config"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 )
 
 const (
-	httpPort = "8080"
-	httpHost = "localhost"
-
-	inventoryServiceAddress = "localhost:50051"
-	paymentServiceAddress   = "localhost:50052"
-	readHeaderTimeout       = 5 * time.Second
-	shutdownTimeout         = 10 * time.Second
+	cfgPath        = "./deploy/compose/order/.env"
+	gfShdwnTimeOut = 5 * time.Second
 )
 
 func main() {
-	connInventory, err := grpc.NewClient(
-		inventoryServiceAddress,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
+	err := config.Load(cfgPath)
 	if err != nil {
-		log.Printf("failed to connect: %v\n", err)
-		return
-	}
-	defer func() {
-		if cerr := connInventory.Close(); cerr != nil {
-			log.Printf("failed to close connect: %v", cerr)
-		}
-	}()
-	inventoryClient := inventoryClient.NewClient(inventoryV1.NewInventoryServiceClient(connInventory))
-
-	connPayment, err := grpc.NewClient(
-		paymentServiceAddress,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
-	if err != nil {
-		log.Printf("failed to connect: %v\n", err)
-		return
-	}
-	defer func() {
-		if cerr := connPayment.Close(); cerr != nil {
-			log.Printf("failed to close connect: %v", cerr)
-		}
-	}()
-	paymentClient := paymentClient.NewClient(paymentV1.NewPaymentServiceClient(connPayment))
-
-	err = godotenv.Load(".env.example")
-	if err != nil {
-		log.Printf("failed to load .env.example file: %v\n", err)
-		return
-	}
-	dbURI := os.Getenv("DB_URI")
-
-	ctx := context.Background()
-	pool, err := pgxpool.New(ctx, dbURI)
-	if err != nil {
-		log.Printf("failed to connect to database: %v\n", err)
-		return
-	}
-	defer pool.Close()
-
-	err = pool.Ping(ctx)
-	if err != nil {
-		log.Printf("db is not available: %v\n", err)
-		return
+		panic(fmt.Errorf("failed to load config: %w", err))
 	}
 
-	migrationsDir := os.Getenv("MIGRATIONS_DIR")
-	migratorRunner := migrator.NewMigrator(stdlib.OpenDB(*pool.Config().Copy().ConnConfig), migrationsDir)
+	appCtx, appCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer appCancel()
+	defer gracefulShutdown()
 
-	err = migratorRunner.Up()
+	closer.Configure(syscall.SIGINT, syscall.SIGTERM)
+
+	a, err := app.New(appCtx)
 	if err != nil {
-		log.Printf("failed to migrate db: %v\n", err)
+		logger.Error(appCtx, "❌ Не удалось создать приложение", zap.Error(err))
 		return
-	}
-
-	orderStorage := orderRepository.NewRepository(pool)
-	service := orderService.NewService(pool, inventoryClient, paymentClient, orderStorage)
-
-	orderHandler := orderAPI.NewAPI(service)
-
-	orderServer, err := orderV1.NewServer(orderHandler)
-	if err != nil {
-		log.Printf("failed to create OpenAPI server: %v", err)
-		return
-	}
-
-	r := chi.NewRouter()
-
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(10 * time.Second))
-
-	r.Mount("/", orderServer)
-
-	server := &http.Server{
-		Addr:              net.JoinHostPort(httpHost, httpPort),
-		Handler:           r,
-		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
 	go func() {
-		log.Printf("🚀 HTTP-сервер запущен на порту %s\n", httpPort)
-		err = server.ListenAndServe()
-		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("❌ Ошибка запуска сервера: %v\n", err)
+		err = a.Run(appCtx)
+		if err != nil {
+			logger.Error(appCtx, "❌ Ошибка при работе приложения", zap.Error(err))
+			return
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+}
 
-	log.Println("🛑 Завершение работы сервера...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+func gracefulShutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), gfShdwnTimeOut)
 	defer cancel()
 
-	err = server.Shutdown(ctx)
-	if err != nil {
-		log.Printf("❌ Ошибка при остановке сервера: %v\n", err)
+	if err := closer.CloseAll(ctx); err != nil {
+		logger.Error(ctx, "❌ Ошибка при завершении работы", zap.Error(err))
 	}
-
-	log.Println("✅ Сервер остановлен")
 }

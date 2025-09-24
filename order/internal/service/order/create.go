@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -44,7 +43,7 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 
 	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		return model.OrderInfo{}, fmt.Errorf("%w: ошибка начала транзакции: %s",
+		return model.OrderInfo{}, fmt.Errorf("%w: failed to start tx: %s",
 			serviceErrors.ErrInternalServer, err.Error())
 	}
 	defer func() {
@@ -59,8 +58,6 @@ func (s *service) Create(ctx context.Context, userUUID model.UserUUID,
 				return
 			}
 		}
-
-		log.Printf("ошибка отката транзакции: %s", err.Error())
 	}()
 
 	createOrderInfo := model.CreateOrder{

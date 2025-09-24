@@ -16,11 +16,11 @@ func (s *service) Cancel(ctx context.Context, params model.CancelOrderParams) er
 	}
 
 	if order.Status == model.OrderStatusPaid {
-		return fmt.Errorf("order is aleready paid: %w", serviceErrors.ErrOnConflict)
+		return fmt.Errorf("order is already paid: %w", serviceErrors.ErrOnConflict)
 	}
 
 	if order.Status == model.OrderStatusCancelled {
-		return fmt.Errorf("order is aleready cancelled: %w", serviceErrors.ErrOnConflict)
+		return fmt.Errorf("order is already cancelled: %w", serviceErrors.ErrOnConflict)
 	}
 
 	updateOrderParams := model.UpdateOrderParams{

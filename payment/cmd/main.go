@@ -1,50 +1,54 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"net"
-	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
-	paymentV1API "github.com/kirillmc/starShipsCompany/payment/internal/api/payment/v1"
-	paymentService "github.com/kirillmc/starShipsCompany/payment/internal/service/payment"
-	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"github.com/kirillmc/starShipsCompany/payment/internal/app"
+	"github.com/kirillmc/starShipsCompany/payment/internal/config"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
+	"go.uber.org/zap"
 )
 
-const grpcPort = 50052
+const (
+	cfgPath        = "./deploy/compose/payment/.env"
+	gfShdwnTimeOut = 5 * time.Second
+)
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	err := config.Load(cfgPath)
 	if err != nil {
-		log.Printf("failed to listen: %v\n", err)
+		panic(fmt.Errorf("failed to load config: %w", err))
+	}
+
+	appCtx, appCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer appCancel()
+	defer gracefulShutdown()
+
+	closer.Configure(syscall.SIGINT, syscall.SIGTERM)
+
+	a, err := app.New(appCtx)
+	if err != nil {
+		logger.Error(appCtx, "❌ Не удалось создать приложение", zap.Error(err))
 		return
 	}
 
-	s := grpc.NewServer()
-	reflection.Register(s)
-	service := paymentService.NewService()
-	api := paymentV1API.NewAPI(service)
+	err = a.Run(appCtx)
+	if err != nil {
+		logger.Error(appCtx, "❌ Ошибка при работе приложения", zap.Error(err))
+		return
+	}
+}
 
-	paymentV1.RegisterPaymentServiceServer(s, api)
+func gracefulShutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), gfShdwnTimeOut)
+	defer cancel()
 
-	go func() {
-		log.Printf("Starting gRPC server at port %d", grpcPort)
-		err = s.Serve(lis)
-		if err != nil {
-			log.Printf("failed to serve: %v\n", err)
-			return
-		}
-	}()
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	log.Println("🛑 Shutting down gRPC server...")
-	s.GracefulStop()
-	log.Println("✅ Server stopped")
+	if err := closer.CloseAll(ctx); err != nil {
+		logger.Error(ctx, "❌ Ошибка при завершении работы", zap.Error(err))
+	}
 }
