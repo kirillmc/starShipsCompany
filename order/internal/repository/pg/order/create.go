@@ -10,8 +10,6 @@ import (
 	converter "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/converter"
 	repoModel "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/model"
 	"github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 const returningPrefix = "RETURNING %s, %s, %s"
@@ -29,7 +27,6 @@ func (r *repository) Create(ctx context.Context, tx pgx.Tx, order model.CreateOr
 
 	query, args, err := insertBuilder.ToSql()
 	if err != nil {
-		logger.Error(ctx, fmt.Sprintf("failed to build %s query", op), zap.Error(err))
 		return model.OrderInfo{}, fmt.Errorf("%w: failed to build %s query: %s",
 			serviceErrors.ErrInternalServer, op, err.Error())
 	}
@@ -38,7 +35,6 @@ func (r *repository) Create(ctx context.Context, tx pgx.Tx, order model.CreateOr
 	err = tx.QueryRow(ctx, query, args...).
 		Scan(&createdOrderInfo.ID, &createdOrderInfo.OrderUUID, &createdOrderInfo.TotalPrice)
 	if err != nil {
-		logger.Error(ctx, fmt.Sprintf("failed to execute %s query", op), zap.Error(err))
 		return model.OrderInfo{}, fmt.Errorf("%w: failed to execute %s query: %s",
 			serviceErrors.ErrInternalServer, op, err.Error())
 	}

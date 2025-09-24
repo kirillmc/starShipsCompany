@@ -30,6 +30,7 @@ import (
 	orderV1 "github.com/kirillmc/starShipsCompany/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	paymentV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/payment/v1"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -93,16 +94,19 @@ func (d *diContainer) PgxPool(ctx context.Context) *pgxpool.Pool {
 		var err error
 		d.pgxPool, err = pgxpool.New(ctx, config.AppConfig().Postgres.URI())
 		if err != nil {
+			logger.Error(ctx, "failed to connect to database", zap.Error(err))
 			panic(fmt.Sprintf("failed to connect to database: %s\n", err))
 		}
 
 		closer.AddNamed("Pgx pool", func(ctx context.Context) error {
+			logger.Error(ctx, "Pgx pool", zap.Error(err))
 			d.pgxPool.Close()
 			return nil
 		})
 
 		err = d.pgxPool.Ping(ctx)
 		if err != nil {
+			logger.Error(ctx, "db is not available", zap.Error(err))
 			panic(fmt.Sprintf("db is not available: %s\n", err))
 		}
 
@@ -111,7 +115,8 @@ func (d *diContainer) PgxPool(ctx context.Context) *pgxpool.Pool {
 
 		err = migratorRunner.Up()
 		if err != nil {
-			panic(fmt.Sprintf("failed to migrate db: %s\n", err))
+			logger.Error(ctx, "db is not available", zap.Error(err))
+			panic(fmt.Sprintf("db is not available: %s\n", err))
 		}
 	}
 

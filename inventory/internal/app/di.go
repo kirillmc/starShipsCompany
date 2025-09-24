@@ -11,10 +11,12 @@ import (
 	"github.com/kirillmc/starShipsCompany/inventory/internal/service"
 	partService "github.com/kirillmc/starShipsCompany/inventory/internal/service/part"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/closer"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.uber.org/zap"
 )
 
 type diContainer struct {
@@ -52,6 +54,7 @@ func (d *diContainer) InventoryRepository(ctx context.Context) mongoRepo.Reposit
 		var err error
 		d.inventoryRepository, err = partRepo.NewRepository(ctx, d.MongoDBHandle(ctx))
 		if err != nil {
+			logger.Error(ctx, "failed to create new repository", zap.Error(err))
 			panic(fmt.Sprintf("failed to create new repository: %s\n", err.Error()))
 		}
 	}
@@ -63,11 +66,14 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 	if d.mongoDBClient == nil {
 		client, err := mongo.Connect(ctx, options.Client().ApplyURI(config.AppConfig().Mongo.URI()))
 		if err != nil {
+			logger.Error(ctx, "failed to connect to MongoDB", zap.Error(err))
 			panic(fmt.Sprintf("failed to connect to MongoDB: %s\n", err.Error()))
 		}
 
 		err = client.Ping(ctx, readpref.Primary())
 		if err != nil {
+
+			logger.Error(ctx, "failed to ping MongoDB", zap.Error(err))
 			panic(fmt.Sprintf("failed to ping MongoDB: %v\n", err))
 		}
 

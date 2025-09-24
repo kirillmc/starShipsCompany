@@ -6,7 +6,9 @@ import (
 
 	"github.com/kirillmc/starShipsCompany/inventory/internal/converter"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
+	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	inventoryV1 "github.com/kirillmc/starShipsCompany/shared/pkg/proto/inventory/v1"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -14,6 +16,7 @@ import (
 func (a *api) GetPart(ctx context.Context, req *inventoryV1.GetPartRequest) (*inventoryV1.GetPartResponse, error) {
 	part, err := a.inventoryService.Get(ctx, req.GetUuid())
 	if err != nil {
+		logger.Error(ctx, "failed to find part", zap.Error(err))
 		if errors.Is(err, serviceErrors.ErrNotFound) {
 			return nil, status.Errorf(codes.NotFound, "failed to find part: %s", serviceErrors.ErrNotFound)
 		}
