@@ -1,4 +1,4 @@
-//go:build integration
+///go:build integration
 
 package integration
 
@@ -33,7 +33,7 @@ var _ = Describe("InventoryService", func() {
 
 	AfterEach(func() {
 		err := env.ClearPartsCollection(ctx)
-		Expect(err).ToNot(HaveOccurred(), "ожидали успешную очистку коллекции patrs")
+		Expect(err).ToNot(HaveOccurred(), "ожидали успешную очистку коллекции parts")
 
 		cancel()
 	})

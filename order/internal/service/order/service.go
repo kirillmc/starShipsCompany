@@ -23,7 +23,6 @@ func NewService(
 	pool *pgxpool.Pool,
 	inventoryClient grpc.InventoryClient,
 	paymentClient grpc.PaymentClient,
-
 	orderPaidProducer def.OrderProducerService,
 	orderRepo pg.OrderRepository,
 ) *service {
