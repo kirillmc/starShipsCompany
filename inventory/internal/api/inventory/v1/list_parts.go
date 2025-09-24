@@ -13,6 +13,14 @@ import (
 )
 
 func (a *api) ListParts(ctx context.Context, req *inventoryV1.ListPartsRequest) (*inventoryV1.ListPartsResponse, error) {
+	if req == nil {
+		logger.Error(ctx, "got empty request")
+		return nil, status.Errorf(codes.InvalidArgument, "got empty request")
+	}
+	if req.GetFilter() == nil {
+		logger.Error(ctx, "got empty filter")
+		return nil, status.Errorf(codes.InvalidArgument, "got empty filter")
+	}
 	partsFilter := converter.ToModelPartsFilter(req.GetFilter())
 	parts, err := a.inventoryService.List(ctx, partsFilter)
 	if err != nil {

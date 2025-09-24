@@ -15,6 +15,8 @@ func ToAPIOrderStatus(status model.OrderStatus) orderV1.OptOrderStatus {
 		respStatus = orderV1.OrderStatusPAID
 	case model.OrderStatusCancelled:
 		respStatus = orderV1.OrderStatusCANCELLED
+	case model.OrderStatusAssembled:
+		respStatus = orderV1.OrderStatusASSEMBLED
 	default:
 		respStatus = orderV1.OrderStatusUNSPECIFIED
 	}
