@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"errors"
+
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"

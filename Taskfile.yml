@@ -554,7 +554,7 @@ tasks:
             continue
           fi
         
-          go test -count=1 
+          go test -count=1 \
         -coverpkg="$TARGET_PKGS" \
             -coverprofile={{.COVERAGE_DIR}}/$mod.out \
             -covermode=atomic \

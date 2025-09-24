@@ -2,7 +2,6 @@ package v1
 
 import (
 	"context"
-	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 
 	"github.com/kirillmc/starShipsCompany/inventory/internal/converter"
 	"github.com/kirillmc/starShipsCompany/inventory/internal/serviceErrors"
