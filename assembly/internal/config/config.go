@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -23,7 +24,7 @@ func AppConfig() *config {
 func Load(path ...string) error {
 	err := godotenv.Load(path...)
 	if err != nil && !os.IsNotExist(err) {
-		return err
+		return fmt.Errorf("failed to load envs: %s", err)
 	}
 
 	loggerCfg, err := env.NewLoggerConfig()
