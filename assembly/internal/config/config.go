@@ -24,7 +24,7 @@ func AppConfig() *config {
 func Load(path ...string) error {
 	err := godotenv.Load(path...)
 	if err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("failed to load envs: %s", err)
+		return fmt.Errorf("failed to load envs: %w", err)
 	}
 
 	loggerCfg, err := env.NewLoggerConfig()
