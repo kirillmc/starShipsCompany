@@ -6,3 +6,4 @@ enum:
   - PENDING_PAYMENT
   - PAID
   - CANCELLED
+  - ASSEMBLED

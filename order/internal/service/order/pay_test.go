@@ -8,6 +8,7 @@ import (
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	"github.com/samber/lo"
+	"github.com/stretchr/testify/mock"
 )
 
 func (s *ServiceSuite) TestPayOrderSuccess() {
@@ -30,6 +31,7 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 			OrderUUID:       params.OrderUUID,
 			TransactionUUID: &foundedTransactionUUID,
 			Status:          lo.ToPtr(model.OrderStatusPaid),
+			PaymentMethod:   lo.ToPtr(params.PaymentMethod),
 		}
 	)
 
@@ -37,7 +39,7 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 		Return(foundedOrder, nil).Once()
 	s.paymentClient.On("PayOrder", ctx, params).Return(foundedTransactionUUID, nil).Once()
 	s.orderRepository.On("UpdateOrder", ctx, updateOrderParams).Return(nil).Once()
-
+	s.orderPaidProducer.On("ProduceOrderPaid", ctx, mock.Anything).Return(nil).Once()
 	transactionUUID, err := s.service.Pay(ctx, params)
 	s.Assert().NoError(err)
 	s.Assert().Equal(foundedTransactionUUID, transactionUUID)

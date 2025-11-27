@@ -7,4 +7,6 @@ use (
 	./order
 	./inventory
 	./payment
+	./assembly
+	./notification
 )

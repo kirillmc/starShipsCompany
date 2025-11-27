@@ -243,6 +243,53 @@ func (_c *Service_Pay_Call) RunAndReturn(run func(context.Context, model.PayOrde
 	return _c
 }
 
+// Update provides a mock function with given fields: ctx, params
+func (_m *Service) Update(ctx context.Context, params model.UpdateOrderParams) error {
+	ret := _m.Called(ctx, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Update")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, model.UpdateOrderParams) error); ok {
+		r0 = rf(ctx, params)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Service_Update_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Update'
+type Service_Update_Call struct {
+	*mock.Call
+}
+
+// Update is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params model.UpdateOrderParams
+func (_e *Service_Expecter) Update(ctx interface{}, params interface{}) *Service_Update_Call {
+	return &Service_Update_Call{Call: _e.mock.On("Update", ctx, params)}
+}
+
+func (_c *Service_Update_Call) Run(run func(ctx context.Context, params model.UpdateOrderParams)) *Service_Update_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(model.UpdateOrderParams))
+	})
+	return _c
+}
+
+func (_c *Service_Update_Call) Return(_a0 error) *Service_Update_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *Service_Update_Call) RunAndReturn(run func(context.Context, model.UpdateOrderParams) error) *Service_Update_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewService creates a new instance of Service. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewService(t interface {

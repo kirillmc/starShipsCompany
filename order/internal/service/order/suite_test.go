@@ -5,7 +5,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	clienMocks "github.com/kirillmc/starShipsCompany/order/internal/client/grpc/mocks"
-	repoMock "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/mocks"
+	repoMocks "github.com/kirillmc/starShipsCompany/order/internal/repository/pg/mocks"
+	serviceMocks "github.com/kirillmc/starShipsCompany/order/internal/service/mocks"
 	"github.com/kirillmc/starShipsCompany/platform/pkg/logger"
 	"github.com/stretchr/testify/suite"
 )
@@ -13,10 +14,11 @@ import (
 type ServiceSuite struct {
 	suite.Suite
 
-	orderRepository     *repoMock.OrderRepository
-	orderPartRepository *repoMock.OrderPartRepository
+	orderRepository     *repoMocks.OrderRepository
+	orderPartRepository *repoMocks.OrderPartRepository
 	inventoryClient     *clienMocks.InventoryClient
 	paymentClient       *clienMocks.PaymentClient
+	orderPaidProducer   *serviceMocks.OrderProducerService
 
 	service *service
 }
@@ -24,8 +26,9 @@ type ServiceSuite struct {
 func (s *ServiceSuite) SetupTest() {
 	s.inventoryClient = clienMocks.NewInventoryClient(s.T())
 	s.paymentClient = clienMocks.NewPaymentClient(s.T())
-	s.orderRepository = repoMock.NewOrderRepository(s.T())
-	s.orderPartRepository = repoMock.NewOrderPartRepository(s.T())
+	s.orderPaidProducer = serviceMocks.NewOrderProducerService(s.T())
+	s.orderRepository = repoMocks.NewOrderRepository(s.T())
+	s.orderPartRepository = repoMocks.NewOrderPartRepository(s.T())
 
 	err := logger.Init("", true)
 	s.Require().NoError(err)
@@ -35,6 +38,7 @@ func (s *ServiceSuite) SetupTest() {
 		pool,
 		s.inventoryClient,
 		s.paymentClient,
+		s.orderPaidProducer,
 		s.orderRepository,
 	)
 }

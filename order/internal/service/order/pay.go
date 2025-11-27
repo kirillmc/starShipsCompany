@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/kirillmc/starShipsCompany/order/internal/converter"
 	"github.com/kirillmc/starShipsCompany/order/internal/model"
 	serviceErrors "github.com/kirillmc/starShipsCompany/order/internal/serviceErrors"
 	"github.com/samber/lo"
@@ -32,8 +33,14 @@ func (s *service) Pay(ctx context.Context, params model.PayOrderParams) (model.T
 		OrderUUID:       params.OrderUUID,
 		TransactionUUID: &transactionUUID,
 		Status:          lo.ToPtr(model.OrderStatusPaid),
+		PaymentMethod:   lo.ToPtr(params.PaymentMethod),
 	}
 	err = s.orderRepo.UpdateOrder(ctx, updateOrderParams)
+	if err != nil {
+		return "", err
+	}
+
+	err = s.orderPaidProducer.ProduceOrderPaid(ctx, converter.ToEventOrderPaid(updateOrderParams))
 	if err != nil {
 		return "", err
 	}
