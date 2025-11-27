@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+// Package user.v1 содержит API для работы с сервисом user
+package user.v1;
+
+option go_package = "github.com/kirillmc/starShipsCompany/shared/pkg/proto/user/v1;user";
+
+// PaymentService - cервис оплаты заказов, который симулирует работу платёжного шлюза
+service UserService {
+  // Register создает нового пользователя в системе и возвращает его UUID
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+// RegisterRequest - запрос на регистрацию пользователя.
+message RegisterRequest{
+  // info - данные для регистрации
+  UserRegistrationInfo info = 1;
+}
+
+// UserRegistrationInfo - данные для регистрации пользователя
+message UserRegistrationInfo{
+  // info - основная информация пользователя
+  common.v1.UserInfo info = 1;
+
+  // password - пароль
+  string password = 2;
+}
+
+// RegisterResponse - ответ с информацией о UUID зарегистрированного пользователя
+message RegisterResponse{
+  string user_user =1;
+}
