@@ -3,7 +3,9 @@ syntax = "proto3";
 // Package user.v1 содержит API для работы с сервисом user
 package user.v1;
 
-option go_package = "github.com/kirillmc/starShipsCompany/shared/pkg/proto/user/v1;user";
+import "common/v1/user.proto";
+
+option go_package = "github.com/kirillmc/starShipsCompany/shared/pkg/proto/user/v1;user_v1";
 
 // PaymentService - cервис оплаты заказов, который симулирует работу платёжного шлюза
 service UserService {
@@ -30,5 +32,15 @@ message UserRegistrationInfo{
 
 // RegisterResponse - ответ с информацией о UUID зарегистрированного пользователя
 message RegisterResponse{
-  string user_user =1;
+  string user_uuid = 1;
+}
+
+// GetUserRequest
+message GetUserRequest{
+  string user_uuid = 1;
+}
+
+// GetUserResponse
+message GetUserResponse{
+  common.v1.User user = 1;
 }

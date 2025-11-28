@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+// Package auth.v1 содержит API для работы с сервисом auth
+package auth.v1;
+
+import "common/v1/session.proto";
+import "common/v1/user.proto";
+
+option go_package = "github.com/kirillmc/starShipsCompany/shared/pkg/proto/auth/v1;auth_v1";
+
+// AuthService
+service AuthService{
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
+}
+
+// LoginRequest
+message LoginRequest{
+  string login = 1;
+  string password = 2;
+}
+
+// LoginResponse
+message LoginResponse{
+  string session_uuid = 1;
+}
+
+// WhoamiRequest
+message WhoamiRequest{
+  string session_uuid = 1;
+}
+
+// WhoamiResponse
+message WhoamiResponse{
+  common.v1.Session session = 1;
+  common.v1.User user = 2;
+}
